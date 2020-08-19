@@ -1,9 +1,14 @@
 #' Driver discovery using mutational signature exposures
 #' 
+#' @param signature_test Name of the signature to test
 #' @param variant_file Path to variant simple file
-#' @param signature_file Path to tab separated variant file
+#' @param signature_file Path to tab separated signatures exposure file
+#' @param covar_file Path to the metadata file
+#' @param out_path Path for output
+#' @param threads Number of threads for running
 #' @export
-sigDriver <- function(variant_file,
+sigDriver <- function(signature_test,
+											variant_file,
 											signature_file,
 											covar_file,
 											out_path,
