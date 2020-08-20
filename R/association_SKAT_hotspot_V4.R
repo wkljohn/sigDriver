@@ -3,7 +3,8 @@
 
 doassocandwriteSKAThotspot <- function (igene,
                              bigtabledesc,gns,somaticvarranges,outfile,
-                             samplemetatablewithentity,sigtest,pathfile,varianttype){
+                             samplemetatablewithentity,sigtest,pathfile,varianttype,
+                             verbose=0){
   #require(bigmemory)
   require(GenomicRanges)
   require(dplyr)
@@ -58,7 +59,7 @@ doassocandwriteSKAThotspot <- function (igene,
 	      #toc()
 	      #NOT ANY MORE on 10kb windows:50 only should contain 1 window
 	      #if (varianttype == 50) { topregions = topregions[1,]}
-	      print(topregions)
+	      if (verbose==1) print(topregions)
 	      if (dim(topregions)[1] != 0){
 	        print("extract variants for top")
 	        #topregions[order(topregions[,3],decreasing = TRUE),]
@@ -71,8 +72,8 @@ doassocandwriteSKAThotspot <- function (igene,
 
 	        #listvarinregion = unique(splitByOverlaptolist(topsomaticvranges, somaticvarranges[[idxchr]], "SYMBOL"))
 	        listvarinregion = unique(splitByOverlaptolist(topsomaticvranges, variantsassociated, "SYMBOL"))
-	        print(topsomaticvranges)
-	        print(length(listvarinregion))
+	        if (verbose==1) print(topsomaticvranges)
+	        if (verbose==1) print(length(listvarinregion))
 	      }else{
 	        listvarinregion = c()
 	      }
@@ -88,9 +89,9 @@ doassocandwriteSKAThotspot <- function (igene,
 	                                              pctin,restricted,isCNV=TRUE)
 	      #NOT ANY MORE on 10kb windows:50 only should contain 1 window
 	      #if (varianttype == 50) { topregions = topregions[1,]}
-	      print(topregions)
+	      if (verbose==1) print(topregions)
 	      if (dim(topregions)[1] != 0){
-	        print("extract variants for top")
+	        if (verbose==1) print("extract variants for top")
 	        #topregions[order(topregions[,3],decreasing = TRUE),]
 	        topsomaticvrangesdf = cbind(as.character(seqnames(testgns1gene)),topregions$START,topregions$END)
 	        topsomaticvrangesdf = data.frame(topsomaticvrangesdf,stringsAsFactors=FALSE)
@@ -101,8 +102,8 @@ doassocandwriteSKAThotspot <- function (igene,
 	        
 	        #listvarinregion = unique(splitByOverlaptolist(topsomaticvranges, somaticvarranges[[idxchr]], "SYMBOL"))
 	        listvarinregion = unique(splitByOverlaptolist(topsomaticvranges, variantsassociated, "SYMBOL"))
-	        print(topsomaticvranges)
-	        print(length(listvarinregion))
+	        if (verbose==1) print(topsomaticvranges)
+	        if (verbose==1) print(length(listvarinregion))
 	      }else{
 	        listvarinregion = c()
 	      }
@@ -122,7 +123,7 @@ doassocandwriteSKAThotspot <- function (igene,
 			max_case_variants = 2
 			min_tested_variants = 6
 	    if (dim(varframe)[1] >= min_tested_variants){
-				print("filt excess singleton 3")
+	      if (verbose==1) print("filt excess singleton 3")
 				variants_per_case = as.data.table(table(varframe$case_ID))
 				variants_per_case_idx = which(variants_per_case$N >= max_case_variants)
 				if (length(variants_per_case_idx) > 0){
@@ -136,7 +137,7 @@ doassocandwriteSKAThotspot <- function (igene,
 						
 						#process each excessive case
 						for (x in 1:length(variants_per_case_idx)){
-							print(paste("Filt",variants_per_case[variants_per_case_idx[x],1,with=FALSE]))
+						  if (verbose==1) print(paste("Filt",variants_per_case[variants_per_case_idx[x],1,with=FALSE]))
 							#print(as.character(varframe$case_ID))
 							#print(variants_per_case[variants_per_case_idx[x],1,with=FALSE])
 							case_remove = which(as.character(varframe$case_ID) %in% variants_per_case[variants_per_case_idx[x],1,with=FALSE])
@@ -184,7 +185,7 @@ doassocandwriteSKAThotspot <- function (igene,
 	      
 	      #print("compute weight")
 	      weightframencLIST = (as.vector(rowSums(varframebycase))) * (varframebycasewithtumorloadmedians  )
-	      print(weightframencLIST)
+	      if (verbose==1) print(weightframencLIST)
 	      
 	      gttable = as.matrix(table(variantsassociated[listvarinregion,]$case_ID))
 
@@ -227,13 +228,13 @@ doassocandwriteSKAThotspot <- function (igene,
       #samplemetatablewithentity$normalized_exposures
       #samplemetatablewithentity$rank   ,produce bad p for background EX1,SBS1
       #
-      print("DOING SKAT")
+      if (verbose==1) print("DOING SKAT")
 			#obj<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")#, type.Resampling="bootstrap", Adjustment=TRUE,n.Resampling=10000)
       
       #handle sex chromosomes
       samplemetatablewithentity$gender = as.factor(samplemetatablewithentity$gender)
       samplemetatablewithentity$gender = 3- as.numeric(samplemetatablewithentity$gender)
-      print(table(samplemetatablewithentity$gender))
+      if (verbose==1) print(table(samplemetatablewithentity$gender))
       #if (idxchr == 23){
       #  attach(samplemetatablewithentity)
       #  obj<-SKAT_Null_Model_ChrX( normsig ~ Entity + nvar + log2(nvar + 1)+ gender, SexVar="gender",out_type="C")
@@ -254,21 +255,23 @@ doassocandwriteSKAThotspot <- function (igene,
 			print("DOING SKATO")
 			
 			#DEBUGGER
-			print("weights")
-			print(head(weightframencLIST,n = 50))
-			print("varframe")
-			print(head(varframebycasemat[head(order(rowSums(varframebycasemat),decreasing = T)),]))
+			if (verbose==1){ 
+			  print("weights")
+			  print(head(weightframencLIST,n = 50))
+			  print("varframe")
+			  print(head(varframebycasemat[head(order(rowSums(varframebycasemat),decreasing = T)),]))
+			}
 			
 			out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKATO")
 			  
-			if (!is.null(out$p.value.resampling)){
+			if (verbose==1 && !is.null(out$p.value.resampling)){
 			  print(min(out$p.value.resampling))
 			  print(median(out$p.value.resampling))
 			  print(max(out$p.value.resampling))
 			  print(Get_Resampling_Pvalue(out))
 			}
 			
-			print(out)
+			if (verbose==1) print(out)
 			
 			if (is.na(out$Q)){
 			  qvaluescast=paste(out$param$q.val.each,collapse=",")
@@ -282,13 +285,13 @@ doassocandwriteSKAThotspot <- function (igene,
 			
       #print(paste(genetest,coef(summary(g))[2,1],coef(summary(g))[2,4],adjsandwitch[2,1],paste(adjsandwitch[,4],collapse = " "),sep=" "))
       #write.table(paste(genetest,coef(summary(g))[2,1],coef(summary(g))[2,4],adjsandwitch[2,1],paste(adjsandwitch[,4],collapse = " "),sep=" "),outfile,sep="\t",append = T,col.names = NA,quote = F)
-      print(rtnline)
+			if (verbose==1) print(rtnline)
       write(rtnline,file=outfile,append=TRUE)
       return(rtnvar)
     }else{
       rtnvar=c(genetest,"NA","NA","NA")
       rtnline=paste(rtnvar,collapse=" ",sep=" ")
-      print(rtnline)
+      if (verbose==1) print(rtnline)
       write(rtnline,file=outfile,append=TRUE)
       return(rtnvar)
       
