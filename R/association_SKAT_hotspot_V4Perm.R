@@ -12,6 +12,7 @@ doassocandwriteSKAThotspotPerm <- function (igene,
   require(data.table)
   require(SKAT)
   require(matrixStats)
+  require(sigDriver)
   
   
   
