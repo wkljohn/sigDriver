@@ -1,11 +1,14 @@
 # sigDriver
 sigDriver is an R package for driver discovery using mutational signatures
 
+# Prerequisites
+sigDriver works in R (>= 3.4.0) and depends on the following packages: data.table, optparse, dplyr, GenomicRanges, reshape2, SKAT, matrixStats, rtracklayer, trackViewer, qqman, VariantAnnotation
+
 # Installation
 Installing sigDriver from shell
 ```console
-git clone https://github.com/wkljohn/sigDriver.git`
-R CMD INSTALL sigDriver-master`
+git clone https://github.com/wkljohn/sigDriver.git
+R CMD INSTALL sigDriver-master
 ```
 
 Alternative installation in R using devtools:

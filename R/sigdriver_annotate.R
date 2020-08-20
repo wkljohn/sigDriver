@@ -55,23 +55,18 @@ sigDriver_annotate <- function(signature_test,
 
 	#init parallelization
 	gc()
-	if (threads > 1){
-	  print("Starting association workers...")
-  	if (grepl("b06",Sys.info()["nodename"])){
-  	  cl <- parallel::makeCluster(6,useXDR=TRUE)
-  	  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
-  	}else{
-  	  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
-  	}
-  	
-  	clusterExport(cl, list("getregionTopMutatedRanges", "doassocandwriteSKAThotspotPerm","getWindowNVarWithWeight"))
-  	
-	  resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+	print("Starting association workers...")
+	if (grepl("b06",Sys.info()["nodename"])){
+	  cl <- parallel::makeCluster(6,useXDR=TRUE)
+	  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
 	}else{
-	  print("Starting without parallelization...")
-	  resultsSKATanno=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
-	  
+	  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
 	}
+	
+	clusterExport(cl, list("getregionTopMutatedRanges", "doassocandwriteSKAThotspotPerm","getWindowNVarWithWeight"))
+	
+	resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+
 	#annotate then write table
 	resultsimportancedf = importance_output_to_table(resultsSKATanno)
 	#annotate table
@@ -81,7 +76,7 @@ sigDriver_annotate <- function(signature_test,
 	write.table(resultsimportancedf[,writefields],fulloutpath,sep="\t",quote=F,row.names=F)
 
 	#plot importance
-	plot_lolli(resultsSKATanno,somaticvarranges=somaticvarranges,resultsimportancedf=resultsimportancedf,gtfref=gtfref,out_path=out_path)
+	plot_lolli(resultsSKATanno,out_path)
 
 	if (F){	#test
 		write(paste("Region","test_site","subregions","test_sites","marker_snvs","n.samples","Q","p.value","importance","entityvar",sep=" "),file=outfile)	 

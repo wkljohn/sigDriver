@@ -14,7 +14,7 @@ readAnnotationGTF <- function(annotation_gtf){
 	}
 }
 
-plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,gtfref,out_path){
+plot_lolli <- function(resultsSKATanno,out_path){
 
 	require(rtracklayer)
 	require(trackViewer)
@@ -48,9 +48,6 @@ plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,gtfr
 	  			end.field="start",keep.extra.columns=TRUE)
 	  			
 	  
-	  print(head(sitestestedGR))
-	  print(head(somaticvarranges))
-	  print(head(chrarrayindex))
 	  #get the variants
 	  overlapvariants = findOverlaps(sitestestedGR,somaticvarranges[[chrarrayindex]])
 	  snvsigtable = data.frame(somaticvarranges[[chrarrayindex]][subjectHits(overlapvariants)],stringsAsFactors=F)
@@ -173,7 +170,7 @@ plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,gtfr
 	  if (as.character(strand(gtfmatch_exons)[1]) == "+"){
 	    print("+")
 	    exonstrand = "+"
-	    if (!is.na(exonstart[1])){
+	    if (!is.na(exonstart)){
 	      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
 	                                                          width=exonend-exonstart,
 	                                                          names=paste0("exon", 1:length(exonstart))))
@@ -197,7 +194,7 @@ plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,gtfr
 	  }else{
 	    
 	    
-	    if (!is.na(exonstart[1])){
+	    if (!is.na(exonstart)){
 	      print("-")
 	      exonstrand = "-"
 	      exonstart=rev(exonstart)
