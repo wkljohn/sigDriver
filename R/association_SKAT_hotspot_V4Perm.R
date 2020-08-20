@@ -1,14 +1,14 @@
 #cat EX1KBrun.cmd | sed 's/ 10 / 30 /g' | sed 's/merged.avout.hg19_multianno.nofilt.txt.gz/merged.avout.hg19_multianno.txt.gz/g'
 #cat SBS_qsub.cmd | sed 's/ 10 / 30 /g' | sed 's/merged.avout.hg19_multianno.nofilt.txt.gz/merged.avout.hg19_multianno.txt.gz/g'
 
-doassocandwriteSKAThotspot <- function (igene,
+doassocandwriteSKAThotspotPerm <- function (igene,
                              bigtabledesc,gns,somaticvarranges,outfile,
                              samplemetatablewithentity,sigtest,pathfile,varianttype,skip=0,ref_pval=1,add_variants=0){
   #require(bigmemory)
   require(GenomicRanges)
   require(dplyr)
   require(reshape2)
-  #require(pscl)
+  require(pscl)
   require(data.table)
   require(SKAT)
   require(matrixStats)
@@ -47,7 +47,6 @@ doassocandwriteSKAThotspot <- function (igene,
 	    variantsassociated = somaticvarranges[[idxchr]][somaticvarranges[[idxchr]]$case_ID %in% samplemetatablewithentity$ID, ]
 	    listvarinregion = unique(splitByOverlaptolist(testgns1gene, variantsassociated, "SYMBOL"))
 	    
-	    source("./hotspot_routine.R")
 	    
 	    
 	    #direct GT table or most mutated region(nc + coding)
@@ -183,8 +182,7 @@ doassocandwriteSKAThotspot <- function (igene,
 	    if (skip == 0 && add_variants == 0 &&  length(weightframencLIST) > 1 && length(weightframencLIST) < 5){
 	      add_variants = 1
 	      print("FIX NUMBER OF SITES TO PERTERB")
-	      source("./lib/association_SKAT_hotspot_V4Perm.R")
-	      returnlist=doassocandwriteSKAThotspot(igene,bigtabledesc,gns,somaticvarranges,outfile,samplemetatablewithentityorg,sigtest,pathfile,varianttype,skip,ref_pval,add_variants=add_variants)
+	      returnlist=doassocandwriteSKAThotspotPerm(igene,bigtabledesc,gns,somaticvarranges,outfile,samplemetatablewithentityorg,sigtest,pathfile,varianttype,skip,ref_pval,add_variants=add_variants)
 	      return(returnlist)
 	    }
 	    
@@ -286,8 +284,7 @@ doassocandwriteSKAThotspot <- function (igene,
     
       
       if (skip <= dim(varframebycase)[1] && skip <= maxstacklimit){#note, varframebycase on skip > 0 is width - 1
-        source("./lib/association_SKAT_hotspot_V4Perm.R")
-        returnlist=doassocandwriteSKAThotspot(igene,bigtabledesc,gns,somaticvarranges,outfile,samplemetatablewithentityorg,sigtest,pathfile,varianttype,skip+1,ref_pval,add_variants)
+        returnlist=doassocandwriteSKAThotspotPerm(igene,bigtabledesc,gns,somaticvarranges,outfile,samplemetatablewithentityorg,sigtest,pathfile,varianttype,skip+1,ref_pval,add_variants)
         returnlist[[length(returnlist)+1]]=rtnvar
         return(returnlist)
       }else{

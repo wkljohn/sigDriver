@@ -8,6 +8,7 @@
 #' @param results_file Path to the results file to load
 #' @param annotation_gtf Path to the gtf file for annotation
 #' @param threads Number of threads for running
+#' @import data.table
 #' @export
 sigDriver_annotate <- function(signature_test,
 											variant_file,
@@ -61,8 +62,10 @@ sigDriver_annotate <- function(signature_test,
 	}else{
 	  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
 	}
-
-	resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+	
+	clusterExport(cl, list("getregionTopMutatedRanges", "doassocandwriteSKAThotspotPerm","getWindowNVarWithWeight"))
+	
+	resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 
 	#annotate then write table
 	resultsimportancedf = importance_output_to_table(resultsSKATanno)

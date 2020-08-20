@@ -1,5 +1,4 @@
 #!/usr/bin/env Rscript
-require(qqman)
 
 
 read_metadata_matrix <- function(covar_file,covariates){
@@ -67,6 +66,7 @@ merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresho
 
 #reader for simple variants file
 read_variants_ranges <- function(variant_file){
+	require(data.table)
 	print("reading variants")
 	#Example simple file headers
 	#<Entity>	<case_ID> <Cohort_ID> <Genome build> <Variant type> <Chr> <start> <end>	<REF> <ALT>
@@ -90,6 +90,8 @@ read_variants_ranges <- function(variant_file){
 	vcfcolumnsforranges=c("chr","start","end","case_ID")
 	fixvcfinfo$start = as.numeric(fixvcfinfo$start)
 	fixvcfinfo$start = as.numeric(fixvcfinfo$end)
+
+
   somaticvarranges=makeGRangesFromDataFrame(
   			fixvcfinfo[,..vcfcolumnsforranges],
   			seqnames.field="chr",
@@ -103,6 +105,7 @@ read_variants_ranges <- function(variant_file){
 
 #reader for simple variants file
 read_variants_ranges_withGT <- function(variant_file){
+	require(data.table)
 	print("reading variants")
 	#Example simple file headers
 	#<Entity>	<case_ID> <Cohort_ID> <Genome build> <Variant type> <Chr> <start> <end>	<REF> <ALT>
@@ -228,7 +231,6 @@ read_genomic_bins <- function(sigdriver_results){
 }
 
 generate_testing_unit_genomic_bins <- function(somaticvarranges){
-  source("./lib/genome_binning.R")
   gnsnew = getChrCut(somaticvarranges)
   #ONLY for ACCELERATION OF FIXED WINDOW SIZE=2KB on PCAWG
   if (F){
@@ -290,7 +292,6 @@ prefilter_genomic_bins <- function(gns,somaticvarranges,framesize_pruned,frame_p
 }
 
 run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo,sampleinfo,gns,out_path,test_mode,write_intermediate){
-	source("./lib/association_SKAT_hotspot_V4.R")
 	
 	outfile_intemediate=paste(out_path,"/",pathsuffix,gsub("Signature ","",signature_test),"_intermediate.tsv",sep="")
 	outfile_full=paste(out_path,"/",pathsuffix,gsub("Signature ","",signature_test),"_results.tsv",sep="")
@@ -313,6 +314,7 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 }
 
 plot_qq <- function(resultsSKATdf,outpath){
+	require(qqman)
 	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
 	png(outpath)
 	qq(resultsSKATp)

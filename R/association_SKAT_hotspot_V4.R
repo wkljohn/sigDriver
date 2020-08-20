@@ -8,7 +8,7 @@ doassocandwriteSKAThotspot <- function (igene,
   require(GenomicRanges)
   require(dplyr)
   require(reshape2)
-  #require(pscl)
+  require(pscl)
   require(data.table)
   require(SKAT)
   require(matrixStats)
@@ -47,7 +47,6 @@ doassocandwriteSKAThotspot <- function (igene,
 	    variantsassociated = somaticvarranges[[idxchr]][somaticvarranges[[idxchr]]$case_ID %in% samplemetatablewithentity$ID, ]
 	    listvarinregion = unique(splitByOverlaptolist(testgns1gene, variantsassociated, "SYMBOL"))
 	    
-	    source("./hotspot_routine.R")
 
 	    #direct GT table or most mutated region(nc + coding)
 	    if (varianttype == 10 || varianttype == 11 || varianttype == 20 || varianttype == 50){
@@ -294,6 +293,7 @@ doassocandwriteSKAThotspot <- function (igene,
       return(rtnvar)
       
     }
+   
   },
   error=function(cond) {
     rtnvar=c(genetest,"ERR","ERR","ERR")

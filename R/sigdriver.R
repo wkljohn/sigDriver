@@ -6,6 +6,7 @@
 #' @param covar_file Path to the metadata file
 #' @param out_path Path for output
 #' @param threads Number of threads for running
+#' @import data.table
 #' @export
 sigDriver <- function(signature_test,
 											variant_file,
@@ -16,7 +17,7 @@ sigDriver <- function(signature_test,
 	#Libraries
 	require(GenomicRanges)
 	require(dplyr)
-	require(data.tabl)
+	require(data.table)
 	#require(sigDriver)
 
 	#run preparation
@@ -44,19 +45,27 @@ sigDriver <- function(signature_test,
 
 	#init parallelization
 	gc()
-	print("Starting association workers...")
-	if (grepl("b06",Sys.info()["nodename"])){
-	  cl <- parallel::makeCluster(threads,useXDR=TRUE)
-	  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
-	}else{
-	  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
-	}
+	if (threads > 1){
+		print("Starting association workers...")
+		if (grepl("b06",Sys.info()["nodename"])){
+		  cl <- parallel::makeCluster(threads,useXDR=TRUE)
+		  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
+		}else{
+		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
+		}
+		clusterExport(cl, list("getregionTopMutatedRanges", "doassocandwriteSKAThotspot","getWindowNVarWithWeight"))
 
-	resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
-	#resultsSKAT=parSapply(cl, 1:16, doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
-	stopCluster(cl)
+		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+		#resultsSKAT=parSapply(cl, 1:16, doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+		stopCluster(cl)
+	}else{
+		print("Starting without parallelization...")
+		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+
+	}
+	
 	resultsSKATdf = data.frame(do.call(rbind,resultsSKAT),stringsAsFactors=F)
-	colnames(resultsSKATdf) = c("Region","Tested_regions","Sites","Variants","n_cases","Q","p_value","p_value_each","Entities")
+	colnames(resultsSKATdf) = c("Region","Tested_regions","Sites","Variants","n_cases","Q","p_value","p_value_each","Entities")[1:dim(resultsSKATdf)[2]]
 	fulloutpath=paste(out_path,"/",signature_test,"_results_FULL.tsv",sep="")
 	Collapsedoutpath=paste(out_path,"/",signature_test,"_results.tsv",sep="")
 
