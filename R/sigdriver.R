@@ -53,7 +53,7 @@ sigDriver <- function(signature_test,
 		}else{
 		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
 		}
-	  print("Exporting functions")
+	  print("Exporting functions2")
 	  clusterExport(cl, varlist=list("getregionTopMutatedRanges", 
 	                                 "doassocandwriteSKAThotspot",
 	                                 "getWindowNVarWithWeight",
