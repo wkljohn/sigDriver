@@ -23,12 +23,12 @@ git clone https://github.com/wkljohn/sigDriver_runner.git
 
 Run sigDriver using helper Rscripts
 ```console
-Rscript run_sigdriver.R -s SBS13 -v ./example/XXXX.simple.gz -e ./example/XXXX_signatures.tsv -m ./example/XXXX_metadata.tsv -o ./output/
+Rscript run_sigdriver.R -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
 Run annotation for sigDriver results using helper Rscripts
 ```console
-Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -l ./output/SBS13_results.tsv -s SBS13 -v ./example/XXXX.simple.gz -e ./example/XXXX_signatures.tsv -m ./example/XXXX_metadata.tsv -o ./output/
+Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -l ./output/SBS13_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
 # Tutorial
