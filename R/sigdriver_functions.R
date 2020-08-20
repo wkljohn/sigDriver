@@ -91,7 +91,6 @@ read_variants_ranges <- function(variant_file){
 	fixvcfinfo$start = as.numeric(fixvcfinfo$start)
 	fixvcfinfo$start = as.numeric(fixvcfinfo$end)
 
-
   somaticvarranges=makeGRangesFromDataFrame(
   			fixvcfinfo[,..vcfcolumnsforranges],
   			seqnames.field="chr",
@@ -129,6 +128,7 @@ read_variants_ranges_withGT <- function(variant_file){
 	vcfcolumnsforranges=c("chr","start","end","case_ID","REF","ALT")
 	fixvcfinfo$start = as.numeric(fixvcfinfo$start)
 	fixvcfinfo$start = as.numeric(fixvcfinfo$end)
+	
   somaticvarranges=makeGRangesFromDataFrame(
   			fixvcfinfo[,..vcfcolumnsforranges],
   			seqnames.field="chr",

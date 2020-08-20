@@ -14,7 +14,7 @@ readAnnotationGTF <- function(annotation_gtf){
 	}
 }
 
-plot_lolli <- function(resultsSKATanno,out_path){
+plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,out_path){
 
 	require(rtracklayer)
 	require(trackViewer)
@@ -48,6 +48,9 @@ plot_lolli <- function(resultsSKATanno,out_path){
 	  			end.field="start",keep.extra.columns=TRUE)
 	  			
 	  
+	  print(head(sitestestedGR))
+	  print(head(somaticvarranges))
+	  print(head(chrarrayindex))
 	  #get the variants
 	  overlapvariants = findOverlaps(sitestestedGR,somaticvarranges[[chrarrayindex]])
 	  snvsigtable = data.frame(somaticvarranges[[chrarrayindex]][subjectHits(overlapvariants)],stringsAsFactors=F)
