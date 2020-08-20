@@ -16,6 +16,9 @@ Installing the helper Rscript
 `$ git clone https://github.com/wkljohn/sigDriver_runner.git`
 
 Running sigDriver using helper Rscripts
-`$ R CMD INSTALL sigDriver-master
+`$ Rscript run_sigdriver.R -s SBS13 -v ./example/XXXX.simple.gz -e ./example/XXXX_signatures.tsv -m ./example/XXXX_metadata.tsv -o ./output/
+
+Running annotation for sigDriver results using helper Rscripts
+`$ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -l ./output/SBS13_results.tsv -s SBS13 -v ./example/XXXX.simple.gz -e ./example/XXXX_signatures.tsv -m ./example/XXXX_metadata.tsv -o ./output/
 
 # How to use
