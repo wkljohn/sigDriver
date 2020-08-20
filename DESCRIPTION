@@ -4,7 +4,8 @@ Version: 1.0.0
 Authors@R: 
     person(given = "Kwong Leong",
            family = "John, Wong",
-           email = "wkljohn@gmail.com")
+           email = "wkljohn@gmail.com",
+           role = "cre")
 Description: Driver discovery using mutational signatures
 Depends: R (>= 3.4.0)
 License: GPL
