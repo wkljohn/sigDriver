@@ -63,7 +63,12 @@ sigDriver_annotate <- function(signature_test,
 	  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
 	}
 	
-	clusterExport(cl, c("getregionTopMutatedRanges", "doassocandwriteSKAThotspotPerm","getWindowNVarWithWeight"))
+	clusterExport(cl, list("getregionTopMutatedRanges", 
+	                       "doassocandwriteSKAThotspot",
+	                       "getWindowNVarWithWeight",
+	                       getregionTopMutatedRanges, 
+	                       doassocandwriteSKAThotspot,
+	                       getWindowNVarWithWeight))
 	
 	resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 

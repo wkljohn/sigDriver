@@ -53,7 +53,12 @@ sigDriver <- function(signature_test,
 		}else{
 		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
 		}
-		clusterExport(cl, c("getregionTopMutatedRanges", "doassocandwriteSKAThotspot","getWindowNVarWithWeight"))
+		clusterExport(cl, list("getregionTopMutatedRanges", 
+		                       "doassocandwriteSKAThotspot",
+		                       "getWindowNVarWithWeight",
+		                       getregionTopMutatedRanges, 
+		                       doassocandwriteSKAThotspot,
+		                       getWindowNVarWithWeight))
 
 		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 		#resultsSKAT=parSapply(cl, 1:16, doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
