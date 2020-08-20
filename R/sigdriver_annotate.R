@@ -81,7 +81,7 @@ sigDriver_annotate <- function(signature_test,
 	write.table(resultsimportancedf[,writefields],fulloutpath,sep="\t",quote=F,row.names=F)
 
 	#plot importance
-	plot_lolli(resultsSKATanno,somaticvarranges=somaticvarranges,resultsimportancedf=resultsimportancedf,out_path=out_path)
+	plot_lolli(resultsSKATanno,somaticvarranges=somaticvarranges,resultsimportancedf=resultsimportancedf,gtfref=gtfref,out_path=out_path)
 
 	if (F){	#test
 		write(paste("Region","test_site","subregions","test_sites","marker_snvs","n.samples","Q","p.value","importance","entityvar",sep=" "),file=outfile)	 

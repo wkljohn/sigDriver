@@ -14,7 +14,7 @@ readAnnotationGTF <- function(annotation_gtf){
 	}
 }
 
-plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,out_path){
+plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,gtfref,out_path){
 
 	require(rtracklayer)
 	require(trackViewer)
@@ -173,7 +173,7 @@ plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,out_
 	  if (as.character(strand(gtfmatch_exons)[1]) == "+"){
 	    print("+")
 	    exonstrand = "+"
-	    if (!is.na(exonstart)){
+	    if (!is.na(exonstart[1])){
 	      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
 	                                                          width=exonend-exonstart,
 	                                                          names=paste0("exon", 1:length(exonstart))))
@@ -197,7 +197,7 @@ plot_lolli <- function(resultsSKATanno,somaticvarranges,resultsimportancedf,out_
 	  }else{
 	    
 	    
-	    if (!is.na(exonstart)){
+	    if (!is.na(exonstart[1])){
 	      print("-")
 	      exonstrand = "-"
 	      exonstart=rev(exonstart)
