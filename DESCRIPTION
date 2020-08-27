@@ -1,12 +1,12 @@
 Package: sigDriver
-Title: What the Package Does (One Line, Title Case)
+Title: Driver discovery using mutational signatures
 Version: 1.0.0
 Authors@R: 
     person(given = "Kwong Leong",
            family = "John, Wong",
            email = "wkljohn@gmail.com",
            role = "cre")
-Description: Driver discovery using mutational signatures
+Description: This tool is a driver discovery tool using mutational signatures. Currently only single base subtitution signatures are supported.
 Depends: R (>= 3.4.0)
 License: GPL
 Encoding: UTF-8
