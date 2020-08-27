@@ -38,6 +38,6 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 5 -l ./output/SBS9_result
 ...Coming soon
 
 # Contact
-For questions and suggestions, contact:
+For questions and suggestions, please contact:
 
 John Wong: wkljohn@gmail.com
