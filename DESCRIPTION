@@ -6,7 +6,7 @@ Authors@R:
            family = "John, Wong",
            email = "wkljohn@gmail.com",
            role = "cre")
-Description: This tool is a driver discovery tool using mutational signatures. Currently only single base subtitution signatures are supported.
+Description: sigDriver is a driver discovery tool base on mutational signature exposures. Currently,  single base subtitution signatures are supported.
 Depends: R (>= 3.4.0)
 License: GPL
 Encoding: UTF-8
