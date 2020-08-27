@@ -1,5 +1,5 @@
 # sigDriver
-sigDriver is an R package for driver discovery using mutational signatures
+sigDriver is a driver discovery tool using mutational signatures. Currently,  single base subtitution signatures are supported.
 
 # Prerequisites
 sigDriver works in R (>= 3.4.0) and depends on the following packages: data.table, optparse, dplyr, GenomicRanges, reshape2, SKAT, matrixStats, rtracklayer, trackViewer, qqman, VariantAnnotation
