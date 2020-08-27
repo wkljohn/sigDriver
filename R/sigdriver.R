@@ -114,4 +114,5 @@ sigDriver <- function(signature_test,
 
 	#Summary generator
 	plot_qq(resultsSKATcollapseddf,paste(out_path,signature_test,"_qq.png",sep=""))
+	print("Done")
 }
