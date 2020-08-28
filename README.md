@@ -29,7 +29,7 @@ Run sigDriver using helper Rscripts
 Rscript run_sigdriver.R -s SBS9 -t 2 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
-Run annotation for sigDriver results using helper Rscripts
+Run results annotation using helper Rscripts
 ```console
 Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 5 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
