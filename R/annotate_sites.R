@@ -14,7 +14,7 @@ readAnnotationGTF <- function(annotation_gtf){
 	}
 }
 
-plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges){
+plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportancedf){
 
 	require(rtracklayer)
 	require(trackViewer)
