@@ -77,7 +77,8 @@ sigDriver_annotate <- function(signature_test,
 	plot_lolli(resultsSKATanno,
 		out_path=out_path,
 		somaticvarranges=somaticvarranges,
-		resultsimportancedf=resultsimportancedf)
+		resultsimportancedf=resultsimportancedf,
+		gtfref=gtfref)
 	print("Done")
 
 	if (F){	#test
