@@ -20,12 +20,12 @@ git clone https://github.com/wkljohn/sigDriver.git
 **Please find the sigDriver helper scripts and example data in the scripts folder:
 [Link to scripts](https://github.com/wkljohn/sigDriver/tree/master/scripts)**
 
-Run sigDriver using helper Rscripts
+Run sigDriver
 ```console
 Rscript run_sigdriver.R -s SBS9 -t 2 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
-Run results annotation using helper Rscripts
+Run results annotation
 ```console
 Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 2 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
