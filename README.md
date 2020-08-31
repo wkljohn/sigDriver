@@ -13,12 +13,12 @@ install_github("wkljohn/sigDriver",subdir="R_library")
 
 Installing the helper Rscript and the example data: 
 ```console
-git clone https://github.com/wkljohn/sigDriver_runner.git
+git clone https://github.com/wkljohn/sigDriver.git
 ```
 
 # How to use
 **Please find the sigDriver helper scripts and example data in the runner folder:
-[Link to runner](https://github.com/wkljohn/sigDriver/tree/master/runner)**
+[Link to runner](https://github.com/wkljohn/sigDriver/tree/master/scripts)**
 
 Run sigDriver using helper Rscripts
 ```console
