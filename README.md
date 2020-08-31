@@ -23,7 +23,7 @@ git clone https://github.com/wkljohn/sigDriver_runner.git
 ```
 
 # How to use
-**Please find the sigDriver helper scripts and example data repositories here:
+**Please find the sigDriver helper scripts and example data in this repository:
 [sigDriver_runner](https://github.com/wkljohn/sigDriver_runner)**
 
 Run sigDriver using helper Rscripts
