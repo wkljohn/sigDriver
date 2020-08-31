@@ -17,7 +17,7 @@ library(devtools)
 install_github("wkljohn/sigDriver")
 ```
 
-Installing the helper Rscript and the example data:
+Installing the helper Rscript and the example data: [to repository](https://github.com/wkljohn/sigDriver_runner)
 ```console
 git clone https://github.com/wkljohn/sigDriver_runner.git
 ```
