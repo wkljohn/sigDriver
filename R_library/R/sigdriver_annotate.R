@@ -55,16 +55,22 @@ sigDriver_annotate <- function(signature_test,
 
 	#init parallelization
 	gc()
-	print("Starting association workers...")
-	if (grepl("b06",Sys.info()["nodename"])){
-	  cl <- parallel::makeCluster(6,useXDR=TRUE)
-	  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
+	if (threads > 1){
+		print("Starting association workers...")
+		if (grepl("b06",Sys.info()["nodename"])){
+		  cl <- parallel::makeCluster(6,useXDR=TRUE)
+		  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
+		}else{
+		  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
+		}
+		resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+
 	}else{
-	  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
+		print("Starting without parallelization...")
+		resultsSKATanno=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+
 	}
 	
-	resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
-
 	#annotate then write table
 	resultsimportancedf = importance_output_to_table(resultsSKATanno)
 	#annotate table
