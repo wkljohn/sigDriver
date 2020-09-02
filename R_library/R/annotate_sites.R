@@ -161,7 +161,9 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  }
 	  #search GTF
 	  gtfmatch_transcript = gtfref[which(gtfref$gene_id == annotationrecord$annotationID[1] & gtfref$type == "transcript")]
-	  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level),]
+	  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level),]
+	  gtfmatch_transcript$tag = gsub("basic","1basic",gtfmatch_transcript$tag)
+	  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$tag,gtfmatch_transcript$level),]
 	  gtfmatch_exons = gtfref[which(gtfref$transcript_id == gtfmatch_transcript$transcript_id[1] & gtfref$type == "exon")]
 	  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type)]
 	  
@@ -234,12 +236,15 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  
 	  if (length(somaticvarranges) > 1){
 	    features$featureLayerID = "exons"
-	   # topsomaticvranges$height = unit(0.03, "points")
-	   # topsomaticvranges$fill = "red"
-	   # topsomaticvranges$featureLayerID = "hotspot"
-	    #names(topsomaticvranges) = rep("Top 1% hotspots",length(topsomaticvranges))
-	    #features=  c(features,topsomaticvranges)
-	  
+	    
+	    topsomaticvranges=sample.gr
+	    topsomaticvranges$height = unit(0.03, "points")
+	    topsomaticvranges$fill = "red"
+	    topsomaticvranges$featureLayerID = "hotspot"
+	    names(topsomaticvranges) = rep("Top 1% hotspots",length(topsomaticvranges))
+	    features=  c(features,topsomaticvranges)
+	  	features$color = "black"
+	  	
 	  	outdirplot = paste(outfolderplots,"/",signature_test,"_",annotationrecord$annotation[1],"_",gsub(":","-",annotationrecord$Region),".png",sep="")
 	  	outdirplotsites = paste(outfolderplots,"/",signature_test,"_",annotationrecord$annotation[1],"_",gsub(":","-",annotationrecord$Region),".tsv",sep="")
 	    print(paste("Plotting",outdirplot))
