@@ -175,13 +175,14 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	    if (!is.na(exonstart)){
 	      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
 	                                                          width=exonend-exonstart,
-	                                                          names=paste0("exon", 1:length(exonstart))))
+                                                          	names=rep("exon",length(exonstart))))
+	                                                          #names=paste0("exon", 1:length(exonstart))))
 	      features$height <- list(rep(unit(12, "points"),length(exonend)))
 	      
 	      features=  c(GRanges(seqnames(gtfmatch_exons)[1], IRanges(exonstart[1]-1500, 
 	                                                           width=1500,
 	                                                           names="upstream")),features)
-	      features$height <- as.list(c(unit(0.01,"points"),rep(unit(0.05, "points"),length(exonend))))
+	      features$height <- as.list(c(unit(0.015,"points"),rep(unit(0.08, "points"),length(exonend))))
 	      
 	      
       	features$fill <- c("gray",rep("deepskyblue",length(exonend)))
@@ -203,11 +204,12 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	      exonend=rev(exonend)
 	      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
 	                                                          width=exonend-exonstart,
-	                                                          names=paste0("exon", length(exonstart):1)))
+                                                          	names=rep("exon",length(exonstart))))
+	                                                          #names=paste0("exon", length(exonstart):1)))
 	      features=  c(features,GRanges(seqnames(gtfmatch_exons)[1], IRanges(exonend[ length(exonend)], 
 	                                                                    width=1500,
 	                                                                    names="upstream")))
-	      features$height <- as.list(c(rep(unit(0.05, "points"),length(exonend)),unit(0.01,"points")))
+	      features$height <- as.list(c(rep(unit(0.08, "points"),length(exonend)),unit(0.015,"points")))
 	      #features$fill <- c(rainbow(length(exonend)),"gray")
       	features$fill <- c(rep("deepskyblue",length(exonend)),"gray")
 	      
