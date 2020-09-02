@@ -128,7 +128,8 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  if (typeof(uniqsitesplot) == "list" && dim(uniqsitesplot)[1] > 0){
 	    
 	    sample.gr <- GRanges(uniqsitesplot$seqnames, IRanges( uniqsitesplot$start, width=1, 
-	                                                          names=paste(uniqsitesplot$N,paste(uniqsitesplot$seqnames,uniqsitesplot$start,sep=":"),uniqsitesplot$EntityString,sep=" / ")))
+	                                                          names=paste(uniqsitesplot$N,paste(uniqsitesplot$seqnames,uniqsitesplot$start,sep=":"),sep=" / ")))
+	                                                          #names=paste(uniqsitesplot$N,paste(uniqsitesplot$seqnames,uniqsitesplot$start,sep=":"),uniqsitesplot$EntityString,sep=" / ")))
 	    sample.gr$score <- uniqsitesplot$importance
 	    
 	  
@@ -142,6 +143,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	    sample.gr$color = gsub("G_T","C_A",sample.gr$color) #[sample.gr$color == "G_A"] = "C_T"
 	    sample.gr$color[!(sample.gr$color %in% muttypes)] = "OTHER"
 	    sample.gr$color <- factor(sample.gr$color, levels=muttypes)
+      sample.gr$label.parameter.gp=gpar(fontsize=10)
 	    legend <- as.integer(factor(muttypes,levels=muttypes))
 	    names(legend) <-muttypes
 
@@ -182,7 +184,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	      features$height <- as.list(c(unit(0.01,"points"),rep(unit(0.05, "points"),length(exonend))))
 	      
 	      
-	      features$fill <- c("gray",rainbow(length(exonend)))
+      	features$fill <- c("gray",rep("deepskyblue",length(exonend)))
 	    }else{
 	#      names(testgns1gene)="unannotated gene"
 	#      features <- testgns1gene
@@ -206,7 +208,8 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	                                                                    width=1500,
 	                                                                    names="upstream")))
 	      features$height <- as.list(c(rep(unit(0.05, "points"),length(exonend)),unit(0.01,"points")))
-	      features$fill <- c(rainbow(length(exonend)),"gray")
+	      #features$fill <- c(rainbow(length(exonend)),"gray")
+      	features$fill <- c(rep("deepskyblue",length(exonend)),"gray")
 	      
 	    }else{
 	#      names(testgns1gene)="unannotated gene"
@@ -239,7 +242,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  	outdirplotsites = paste(outfolderplots,"/",signature_test,"_",annotationrecord$annotation[1],"_",gsub(":","-",annotationrecord$Region),".tsv",sep="")
 	    print(paste("Plotting",outdirplot))
 	   print(sample.gr)
-	    png(outdirplot,width = 2000,height = 700)
+	    png(outdirplot,width = 2000,height = 800,res=150)
 	    lolliplot(sample.gr, features,ylab=paste(signature_test, " -log(p) change"), yaxis=c(0,ceiling(max(sample.gr$score))),legend=legend)
 	    dev.off()
 	      
