@@ -163,7 +163,8 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  gtfmatch_transcript = gtfref[which(gtfref$gene_id == annotationrecord$annotationID[1] & gtfref$type == "transcript")]
 	  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level),]
 	  gtfmatch_transcript$tag = gsub("basic","1basic",gtfmatch_transcript$tag)
-	  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$tag,gtfmatch_transcript$level),]
+	  gtfmatch_transcript$transcript_type = gsub("protein_coding","1protein_coding",gtfmatch_transcript$transcript_type)
+	  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type,gtfmatch_transcript$tag,gtfmatch_transcript$level),]
 	  gtfmatch_exons = gtfref[which(gtfref$transcript_id == gtfmatch_transcript$transcript_id[1] & gtfref$type == "exon")]
 	  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type)]
 	  
