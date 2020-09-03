@@ -249,7 +249,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  	outdirplotsites = paste(outfolderplots,"/",signature_test,"_",annotationrecord$annotation[1],"_",gsub(":","-",annotationrecord$Region),".tsv",sep="")
 	    print(paste("Plotting",outdirplot))
 	   print(sample.gr)
-	    png(outdirplot,width = 2000,height = 800,res=150)
+	    png(outdirplot,width = 2000,height = 820,res=150)
 	    lolliplot(sample.gr, features,ylab=paste(signature_test, " -log(p) change"), yaxis=c(0,ceiling(max(sample.gr$score))),legend=legend)
 	    dev.off()
 	      
