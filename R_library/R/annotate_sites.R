@@ -112,7 +112,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	    uniqsitesplot = uniqsites[!(uniqsites$start %in% excludestarts),]
 	  }else{
 	    uniqsitesplot = uniqsites
-          }
+    }
 	  
 	  #check output directories
 	  if (!dir.exists(paste(out_path,"/plots/",sep=""))){
@@ -159,100 +159,121 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  	print(paste("No annotation for region",annotationrecord$Region[1]))
 	  	next()
 	  }
+	  
 	  #search GTF
-	  gtfmatch_transcript = gtfref[which(gtfref$gene_id == annotationrecord$annotationID[1] & gtfref$type == "transcript")]
-	  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level),]
-	  gtfmatch_transcript$tag = gsub("basic","1basic",gtfmatch_transcript$tag)
-	  gtfmatch_transcript$transcript_type = gsub("protein_coding","1protein_coding",gtfmatch_transcript$transcript_type)
-	  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type,gtfmatch_transcript$tag,gtfmatch_transcript$level),]
-	  gtfmatch_exons = gtfref[which(gtfref$transcript_id == gtfmatch_transcript$transcript_id[1] & gtfref$type == "exon")]
-	  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type)]
-	  
-	  #get exons
-	  exonstart = start(gtfmatch_exons)
-	  exonend = end(gtfmatch_exons)
-	  exonstrand = "+"
-	  if (as.character(strand(gtfmatch_exons)[1]) == "+"){
-	    print("+")
-	    exonstrand = "+"
-	    if (!is.na(exonstart)){
-	      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
-	                                                          width=exonend-exonstart,
-                                                          	names=rep("exon",length(exonstart))))
-	                                                          #names=paste0("exon", 1:length(exonstart))))
-	      features$height <- list(rep(unit(12, "points"),length(exonend)))
-	      
-	      features=  c(GRanges(seqnames(gtfmatch_exons)[1], IRanges(exonstart[1]-1500, 
-	                                                           width=1500,
-	                                                           names="upstream")),features)
-	      features$height <- as.list(c(unit(0.015,"points"),rep(unit(0.08, "points"),length(exonend))))
-	      
-	      
-      	features$fill <- c("gray",rep("deepskyblue",length(exonend)))
-	    }else{
-	#      names(testgns1gene)="unannotated gene"
-	#      features <- testgns1gene
-	#      features$height <- list(rep(unit(12, "points"),length(testgns1gene)))
-	#      
-	#      features$height <- as.list(rep(unit(0.05, "points"),length(testgns1gene)))
-	#      features$fill <- c(rainbow(length(testgns1gene)))
-	    }
-	  }else{
-	    
-	    
-	    if (!is.na(exonstart)){
-	      print("-")
-	      exonstrand = "-"
-	      exonstart=rev(exonstart)
-	      exonend=rev(exonend)
-	      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
-	                                                          width=exonend-exonstart,
-                                                          	names=rep("exon",length(exonstart))))
-	                                                          #names=paste0("exon", length(exonstart):1)))
-	      features=  c(features,GRanges(seqnames(gtfmatch_exons)[1], IRanges(exonend[ length(exonend)], 
-	                                                                    width=1500,
-	                                                                    names="upstream")))
-	      features$height <- as.list(c(rep(unit(0.08, "points"),length(exonend)),unit(0.015,"points")))
-	      #features$fill <- c(rainbow(length(exonend)),"gray")
-      	features$fill <- c(rep("deepskyblue",length(exonend)),"gray")
-	      
-	    }else{
-	#      names(testgns1gene)="unannotated gene"
-	#      features <- testgns1gene
-	#      features$height <- list(rep(unit(12, "points"),length(testgns1gene)))
-	#      
-	#      features$height <- as.list(rep(unit(0.05, "points"),length(testgns1gene)))
-	#      features$fill <- c(rainbow(length(testgns1gene)))
-	    }
-	  }
-	  
-	  #features$fill <- brewer.pal(n = length(exonend), name = 'Spectral')
-	  #do exonic annotation here
-	  if (length(features) >= 2 && length(which(uniqsites$importance > 1 & uniqsites$importance > (max(uniqsites$importance) * 0.33 ))) > 0){
-	    sitegranges <- GRanges(seqnames(gtfmatch_exons)[1], IRanges(uniqsites$start[which(uniqsites$importance > 1 & uniqsites$importance > (max(uniqsites$importance) * 0.33 ))],   width=1))
-	    overlapcoding <- queryHits(findOverlaps(sitegranges,features))
-	  }else{
-	    overlapcoding <- c()
-	  }
-	  
-	  if (length(somaticvarranges) > 1){
-	    features$featureLayerID = "exons"
-	    
-	    topsomaticvranges=sample.gr
-	    topsomaticvranges$height = unit(0.03, "points")
-	    topsomaticvranges$fill = "red"
-	    topsomaticvranges$featureLayerID = "hotspot"
-	    names(topsomaticvranges) = rep("Top 1% hotspots",length(topsomaticvranges))
-	    features=  c(features,topsomaticvranges)
-	  	features$color = "black"
+	  #do for every gene
+	  IDsToAnnotate = strsplit(annotationrecord$annotationID[1],",")[[1]]
+	  GIDsToAnnotate = strsplit(annotationrecord$annotation[1],",")[[1]]
+	  for (k in 1:length(IDsToAnnotate)){
+	  	print(IDsToAnnotate[k])
+	  	print(GIDsToAnnotate[k])
 	  	
-	  	outdirplot = paste(outfolderplots,"/",signature_test,"_",annotationrecord$annotation[1],"_",gsub(":","-",annotationrecord$Region),".png",sep="")
-	  	outdirplotsites = paste(outfolderplots,"/",signature_test,"_",annotationrecord$annotation[1],"_",gsub(":","-",annotationrecord$Region),".tsv",sep="")
-	    print(paste("Plotting",outdirplot))
-	   print(sample.gr)
-	    png(outdirplot,width = 2000,height = 820,res=150)
-	    lolliplot(sample.gr, features,ylab=paste(signature_test, " -log(p) change"), yaxis=c(0,ceiling(max(sample.gr$score))),legend=legend)
-	    dev.off()
+		  #gtfmatch_transcript = gtfref[which(gtfref$gene_id == annotationrecord$annotationID[1] & gtfref$type == "transcript")]
+		  transcripttoAnno2 = gsub("_.*","",IDsToAnnotate[k])
+		  gtfmatch_transcript = gtfref[which((gtfref$gene_id == IDsToAnnotate[k] | gtfref$gene_id ==  transcripttoAnno2) & gtfref$type == "transcript")]
+		  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level),]
+		  gtfmatch_transcript$tag = gsub("basic","1basic",gtfmatch_transcript$tag)
+		  gtfmatch_transcript$transcript_type = gsub("protein_coding","1protein_coding",gtfmatch_transcript$transcript_type)
+		  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type,gtfmatch_transcript$tag,gtfmatch_transcript$level),]
+		  
+		  if (length(gtfmatch_transcript ) > 0){
+		  
+			  gtfmatch_exons = gtfref[which(gtfref$transcript_id == gtfmatch_transcript$transcript_id[1] & gtfref$type == "exon")]
+			  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type)]
+			  
+			  #get exons
+			  exonstart = start(gtfmatch_exons)
+			  exonend = end(gtfmatch_exons)
+			  exonstrand = "+"
+			  if (as.character(strand(gtfmatch_exons)[1]) == "+"){
+			    print("+")
+			    exonstrand = "+"
+			    if (!is.na(exonstart)){
+			      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
+			                                                          width=exonend-exonstart,
+		                                                          	names=rep("exon",length(exonstart))))
+			                                                          #names=paste0("exon", 1:length(exonstart))))
+			      features$height <- list(rep(unit(12, "points"),length(exonend)))
+			      
+			      features=  c(GRanges(seqnames(gtfmatch_exons)[1], IRanges(exonstart[1]-1500, 
+			                                                           width=1500,
+			                                                           names="upstream")),features)
+			      features$height <- as.list(c(unit(0.015,"points"),rep(unit(0.08, "points"),length(exonend))))
+			      
+			      
+		      	features$fill <- c("gray",rep("deepskyblue",length(exonend)))
+			    }else{
+			#      names(testgns1gene)="unannotated gene"
+			#      features <- testgns1gene
+			#      features$height <- list(rep(unit(12, "points"),length(testgns1gene)))
+			#      
+			#      features$height <- as.list(rep(unit(0.05, "points"),length(testgns1gene)))
+			#      features$fill <- c(rainbow(length(testgns1gene)))
+			    }
+			  }else{
+			    
+			    
+			    if (!is.na(exonstart)){
+			      print("-")
+			      exonstrand = "-"
+			      exonstart=rev(exonstart)
+			      exonend=rev(exonend)
+			      features <- GRanges(seqnames(gtfmatch_exons), IRanges(exonstart, 
+			                                                          width=exonend-exonstart,
+		                                                          	names=rep("exon",length(exonstart))))
+			                                                          #names=paste0("exon", length(exonstart):1)))
+			      features=  c(features,GRanges(seqnames(gtfmatch_exons)[1], IRanges(exonend[ length(exonend)], 
+			                                                                    width=1500,
+			                                                                    names="upstream")))
+			      features$height <- as.list(c(rep(unit(0.08, "points"),length(exonend)),unit(0.015,"points")))
+			      #features$fill <- c(rainbow(length(exonend)),"gray")
+		      	features$fill <- c(rep("deepskyblue",length(exonend)),"gray")
+			      
+			    }else{
+			#      names(testgns1gene)="unannotated gene"
+			#      features <- testgns1gene
+			#      features$height <- list(rep(unit(12, "points"),length(testgns1gene)))
+			#      
+			#      features$height <- as.list(rep(unit(0.05, "points"),length(testgns1gene)))
+			#      features$fill <- c(rainbow(length(testgns1gene)))
+			    }
+			  }
+			  
+			  #features$fill <- brewer.pal(n = length(exonend), name = 'Spectral')
+			  #do exonic annotation here
+			  if (length(features) >= 2 && length(which(uniqsites$importance > 1 & uniqsites$importance > (max(uniqsites$importance) * 0.33 ))) > 0){
+			    sitegranges <- GRanges(seqnames(gtfmatch_exons)[1], IRanges(uniqsites$start[which(uniqsites$importance > 1 & uniqsites$importance > (max(uniqsites$importance) * 0.33 ))],   width=1))
+			    overlapcoding <- queryHits(findOverlaps(sitegranges,features))
+			  }else{
+			    overlapcoding <- c()
+			  }
+				  
+			  if (length(somaticvarranges) >= 1){
+			    features$featureLayerID = "exons"
+			    
+			    topsomaticvranges=sample.gr
+			    topsomaticvranges$height = unit(0.03, "points")
+			    topsomaticvranges$fill = "red"
+			    topsomaticvranges$featureLayerID = "hotspot"
+			    names(topsomaticvranges) = rep("Top 1% hotspots",length(topsomaticvranges))
+			    features=  c(features,topsomaticvranges)
+			  	features$color = "black"
+			  	
+			  	outdirplot = paste(outfolderplots,"/",signature_test,"_",GIDsToAnnotate[k],"_",gsub(":","-",annotationrecord$Region),".png",sep="")
+			  	outdirplotsites = paste(outfolderplots,"/",signature_test,"_",GIDsToAnnotate[k],"_",gsub(":","-",annotationrecord$Region),".tsv",sep="")
+			    print(paste("Plotting",outdirplot))
+			   print(sample.gr)
+			    png(outdirplot,width = 2000,height = 820,res=150)
+			    lolliplot(sample.gr, features,ylab=paste(signature_test, " -log(p) change"), yaxis=c(0,ceiling(max(sample.gr$score))),legend=legend)
+			    dev.off()
+			   }
+			}
+	  }
+	  
+	  
+	  #output summary
+	  if (length(somaticvarranges) > 1){
+	  
 	      
 	    outtablesnv = cbind(snvsigtable$seqnames,snvsigtable$start,snvsigtable$end,exonstrand)
 	    
@@ -395,12 +416,20 @@ annotate_importance <- function(resultsimportancedf,gtfref){
 			overlapanno = findOverlaps(sitestestedGR,subsetgtf)
 			if (length(overlapanno) > 0){
 				overlapannodf = as.data.table(overlapanno)
-				overlapannodf = overlapannodf[!duplicated(overlapannodf$queryHits),]
-				sitestestedGR[overlapannodf$queryHits]$annotation = subsetgtf[overlapannodf$subjectHits]$transcript_name
-				sitestestedGR[overlapannodf$queryHits]$annotationID = subsetgtf[overlapannodf$subjectHits]$gene_id
-				sitestestedGR[overlapannodf$queryHits]$annotationtype = annotation_elements_priority[j]
+				#overlapannodf = overlapannodf[!duplicated(overlapannodf$queryHits),]
+				overlapannodfQ = overlapannodf[!duplicated(overlapannodf$queryHits),]
+				overlapannodfS = overlapannodf[!duplicated(overlapannodf$subjectHits),]
+				
+				if (!is.na(subsetgtf[overlapannodfS$subjectHits]$transcript_name[1])){
+					sitestestedGR[overlapannodfQ$queryHits]$annotation = paste(subsetgtf[overlapannodfS$subjectHits]$transcript_name,collapse=",")
+				}else{
+					sitestestedGR[overlapannodfQ$queryHits]$annotation = paste(subsetgtf[overlapannodfS$subjectHits]$gene_name,collapse=",")
+				}
+				sitestestedGR[overlapannodfQ$queryHits]$annotationID = paste(subsetgtf[overlapannodfS$subjectHits]$gene_id,collapse=",")
+				sitestestedGR[overlapannodfQ$queryHits]$annotationtype = annotation_elements_priority[j]
 			}
 		}
+
 		#add missing ones
 		overlapannodfNAidx = which(is.na(sitestestedGR$annotation))
 		if (length(overlapannodfNAidx) > 0){
