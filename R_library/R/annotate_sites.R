@@ -263,7 +263,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 			  	outdirplotsites = paste(outfolderplots,"/",signature_test,"_",GIDsToAnnotate[k],"_",gsub(":","-",annotationrecord$Region),".tsv",sep="")
 			    print(paste("Plotting",outdirplot))
 			   print(sample.gr)
-			    png(outdirplot,width = 2000,height = 820,res=150)
+			    png(outdirplot,width = 2000,height = 900,res=150)
 			    lolliplot(sample.gr, features,ylab=paste(signature_test, " -log(p) change"), yaxis=c(0,ceiling(max(sample.gr$score))),legend=legend)
 			    dev.off()
 			   }
@@ -274,7 +274,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  #output summary
 	  if (length(somaticvarranges) >= 1){
 	  
-	      
+	   	print("Writing sites summary")
 	    outtablesnv = cbind(snvsigtable$seqnames,snvsigtable$start,snvsigtable$end,exonstrand)
 	    
 	    write(paste(annotationrecord$annotation[1],
