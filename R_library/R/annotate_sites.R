@@ -272,7 +272,7 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  
 	  
 	  #output summary
-	  if (length(somaticvarranges) > 1){
+	  if (length(somaticvarranges) >= 1){
 	  
 	      
 	    outtablesnv = cbind(snvsigtable$seqnames,snvsigtable$start,snvsigtable$end,exonstrand)
