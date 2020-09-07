@@ -160,6 +160,15 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 	  	next()
 	  }
 	  
+	  
+	  #sort the unique sites
+		uniqsitesplot = uniqsitesplot[order(uniqsitesplot$importance,decreasing=T),]
+	  uniqsitesplotDistanceMeasure = sitestestedGR[which(start(sitestestedGR) %in% uniqsitesplot[which(uniqsitesplot$importance > 0),]$start)]
+	  if (length(uniqsitesplotDistanceMeasure) == 0){
+	  	#fall back selection
+	  	uniqsitesplotDistanceMeasure = sitestestedGR[which(start(sitestestedGR) %in% uniqsitesplot$start)]
+	  }
+	  
 	  #search GTF
 	  #do for every gene
 	  IDsToAnnotate = strsplit(annotationrecord$annotationID[1],",")[[1]]
@@ -172,9 +181,18 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 		  transcripttoAnno2 = gsub("_.*","",IDsToAnnotate[k])
 		  gtfmatch_transcript = gtfref[which((gtfref$gene_id == IDsToAnnotate[k] | gtfref$gene_id ==  transcripttoAnno2) & gtfref$type == "transcript")]
 		  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level),]
+		  gtfmatch_transcript$distance = distanceToNearest(gtfmatch_transcript,uniqsitesplotDistanceMeasure)@elementMetadata$distance
+		  
 		  gtfmatch_transcript$tag = gsub("basic","1basic",gtfmatch_transcript$tag)
 		  gtfmatch_transcript$transcript_type = gsub("protein_coding","1protein_coding",gtfmatch_transcript$transcript_type)
-		  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_type,gtfmatch_transcript$tag,gtfmatch_transcript$level),]
+		  #old priority
+		  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$distance,gtfmatch_transcript$transcript_type,gtfmatch_transcript$tag,gtfmatch_transcript$level),]
+		  #new priority
+		  if ("transcript_support_level" %in% colnames(gtfmatch_transcript@elementMetadata)){
+		  		  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_support_level,gtfmatch_transcript$distance),]
+		  }else{
+		  		  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level,gtfmatch_transcript$distance),]
+		  }
 		  
 		  if (length(gtfmatch_transcript ) > 0){
 		  
