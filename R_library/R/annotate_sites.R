@@ -189,9 +189,11 @@ plot_lolli <- function(resultsSKATanno,out_path,somaticvarranges,resultsimportan
 		  #gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$distance,gtfmatch_transcript$transcript_type,gtfmatch_transcript$tag,gtfmatch_transcript$level),]
 		  #new priority
 		  if ("transcript_support_level" %in% colnames(gtfmatch_transcript@elementMetadata)){
-		  		  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_support_level,gtfmatch_transcript$distance),]
+		  	#use both support level 2 and 1
+		  	gtfmatch_transcript$transcript_support_level = gsub("2","1",gtfmatch_transcript$transcript_support_level)
+		  	gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$transcript_support_level,gtfmatch_transcript$distance),]
 		  }else{
-		  		  gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level,gtfmatch_transcript$distance),]
+		  	gtfmatch_transcript = gtfmatch_transcript[order(gtfmatch_transcript$level,gtfmatch_transcript$distance),]
 		  }
 		  
 		  if (length(gtfmatch_transcript ) > 0){
@@ -431,11 +433,12 @@ annotate_importance <- function(resultsimportancedf,gtfref){
 		
 		for (j in length(annotation_elements_priority):1){
 			subsetgtf = gtfref[which(gtfref$type == annotation_elements_priority[j])]
-			overlapanno = findOverlaps(sitestestedGR,subsetgtf)
+			overlapanno = findOverlaps(sitestestedGR,subsetgtf,maxgap=1500)
 			if (length(overlapanno) > 0){
 				overlapannodf = as.data.table(overlapanno)
 				
 			  queriesfound = unique(overlapannodf$queryHits)
+			  
 				for (k in 1:length(queriesfound)){
 				  procidx = queriesfound[k]
 			    overlapannodfByQuery = overlapannodf[which(overlapannodf$queryHits == procidx),]
@@ -464,7 +467,7 @@ annotate_importance <- function(resultsimportancedf,gtfref){
 			hit_nearestdf = as.data.table(hit_nearest,stringsAsFactors=F)
 			hit_nearestdf = hit_nearestdf[order(hit_nearestdf$queryHits),]
 			hit_nearestdf = data.table(hit_nearestdf,annotation=NA,annotationID=NA,annotationtype="gene")
-			hit_nearestdf$annotation = subsetgtf[hit_nearestdf$subjectHits]$transcript_name
+			hit_nearestdf$annotation = subsetgtf[hit_nearestdf$subjectHits]$gene_name
 			hit_nearestdf$annotationID = subsetgtf[hit_nearestdf$subjectHits]$gene_id
 			missingAnnoGR[hit_nearestdf$queryHits]$annotation = hit_nearestdf$annotation
 			missingAnnoGR[hit_nearestdf$queryHits]$annotationID = hit_nearestdf$annotationID
