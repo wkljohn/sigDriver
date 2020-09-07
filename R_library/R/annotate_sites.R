@@ -416,17 +416,22 @@ annotate_importance <- function(resultsimportancedf,gtfref){
 			overlapanno = findOverlaps(sitestestedGR,subsetgtf)
 			if (length(overlapanno) > 0){
 				overlapannodf = as.data.table(overlapanno)
-				#overlapannodf = overlapannodf[!duplicated(overlapannodf$queryHits),]
-				overlapannodfQ = overlapannodf[!duplicated(overlapannodf$queryHits),]
-				overlapannodfS = overlapannodf[!duplicated(overlapannodf$subjectHits),]
 				
-				if (!is.na(subsetgtf[overlapannodfS$subjectHits]$transcript_name[1])){
-					sitestestedGR[overlapannodfQ$queryHits]$annotation = paste(subsetgtf[overlapannodfS$subjectHits]$transcript_name,collapse=",")
-				}else{
-					sitestestedGR[overlapannodfQ$queryHits]$annotation = paste(subsetgtf[overlapannodfS$subjectHits]$gene_name,collapse=",")
+			  queriesfound = unique(overlapannodf$queryHits)
+				for (k in 1:length(queriesfound)){
+				  procidx = queriesfound[k]
+			    overlapannodfByQuery = overlapannodf[which(overlapannodf$queryHits == procidx),]
+			    #overlapannodfQ = overlapannodf[!duplicated(overlapannodf$queryHits),]
+			    #overlapannodfS = overlapannodf[!duplicated(overlapannodf$subjectHits),]
+			    
+			    if (!is.na(subsetgtf[overlapannodfByQuery$subjectHits]$transcript_name[1])){
+			      sitestestedGR[procidx]$annotation = paste(subsetgtf[overlapannodfByQuery$subjectHits]$transcript_name,collapse=",")
+			    }else{
+			      sitestestedGR[procidx]$annotation = paste(subsetgtf[overlapannodfByQuery$subjectHits]$gene_name,collapse=",")
+			    }
+			    sitestestedGR[procidx]$annotationID = paste(subsetgtf[overlapannodfByQuery$subjectHits]$gene_id,collapse=",")
+			    sitestestedGR[procidx]$annotationtype = annotation_elements_priority[j]
 				}
-				sitestestedGR[overlapannodfQ$queryHits]$annotationID = paste(subsetgtf[overlapannodfS$subjectHits]$gene_id,collapse=",")
-				sitestestedGR[overlapannodfQ$queryHits]$annotationtype = annotation_elements_priority[j]
 			}
 		}
 
