@@ -33,15 +33,15 @@ git clone https://github.com/wkljohn/sigDriver.git
 
 # How to use
 Run sigDriver
-+ The approximate run time for this part of the demo is XX seconds
++ The approximate run time for this part of the demo is 9 minutes
 ```console
-Rscript run_sigdriver.R -s SBS9 -t 2 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
+Rscript run_sigdriver.R -s SBS9 -t 4 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
 Run results annotation
 + The approximate run time for this part of the demo is XX seconds
 ```console
-Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 2 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
+Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
 # Results

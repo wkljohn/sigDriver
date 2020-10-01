@@ -35,13 +35,13 @@ git clone https://github.com/wkljohn/sigDriver.git
 Run sigDriver
 + The approximate run time for this part of the demo is XX seconds
 ```console
-Rscript run_sigdriver.R -s SBS9 -t 2 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
+Rscript run_sigdriver.R -s SBS9 -t 4 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
 Run results annotation
 + The approximate run time for this part of the demo is XX seconds
 ```console
-Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 2 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
+Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
 # Results
@@ -58,7 +58,7 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 2 -l ./output/SBS9_result
 
 | File name | Description |
 | --------- | ----------- |
-| `{signature}_perturb_sites_annotated_results.tsv` | the perturbed p-values and gene annotations of each point mutation |
+| `{signature}_perturb_sites_annotated_results.tsv` | the perturbed p-values and gene annotations of each hotspot point mutation |
 | `./plots/{signature}/[hotspot].png` | the graphical presentation of the significant hotspot |
 | `./plots/{signature}/[hotspot].png` | the graphical presentation of the significant hotspot |
 
