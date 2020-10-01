@@ -45,12 +45,12 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 2 -l ./output/SBS9_result
 ```
 
 # Results
-Running sigDriver produce the following outputs:
+Running `run_sigdriver.R` produce the following outputs:
 + [signature]_results.tsv : the final output of the script on associated hotspots and the details
 + [signature]_results_FULL.tsv : the hotspots output before filtering and p-values correction
 + [signature]_qq.png : the quantile-quantile plot for the distribution of p-values
 
-Running sigDriver annotation produce the following outputs:
+Running `run_sigdriver_annotate.R` produce the following outputs:
 + [signature]_perturb_sites_annotated_results.tsv : the perturbed p-values and gene annotations of each hotspot
 + plots/[signature]/[hotspot].png : the graphical presentation of the significant hotspot
 + plots/[signature]/[hotspot].png : the graphical presentation of the significant hotspot
