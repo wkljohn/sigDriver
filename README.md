@@ -7,7 +7,7 @@ sigDriver works in R (>= 3.4.0) and depends on the following packages: data.tabl
 
 # System Requirements
 ## Hardware requirements
-`sigDriver` package requires a standard computer. The memory requirment is dependent on the number of the input somatic variants and number of requested threads.
+`sigDriver` package can run on a standard computer. The memory requirment is dependent on the number of the input somatic variants and number of requested threads.
 
 ## Software requirements
 ### OS Requirements
@@ -41,8 +41,9 @@ Run results annotation
 Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 2 -l ./output/SBS9_results.tsv -s SBS9 -v ./example/example_SBS9.snv.simple.gz -e ./example/example_signatures.tsv -m ./example/example_SBS9_metadata.tsv -o ./output/
 ```
 
-# Tutorial
-...Coming soon
+# Results
+
+
 
 # Contact
 For questions and suggestions, please contact:
