@@ -32,6 +32,9 @@ git clone https://github.com/wkljohn/sigDriver.git
 ```
 
 # How to use
+**Please find the sigDriver helper scripts and example data in the scripts folder:
+[Link to scripts](https://github.com/wkljohn/sigDriver/tree/master/scripts)**
+
 Run sigDriver
 + The approximate run time for this part of the demo is XX seconds
 ```console
