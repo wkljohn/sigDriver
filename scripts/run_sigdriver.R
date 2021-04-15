@@ -85,7 +85,7 @@ Options:
 	#print( names(argv))
 	if (!("signature_test" %in% names(argv))){
 		cat("Please provide a signature to test\n")
-		cat(names(argv))
+		cat(paste(commandArgs()))
 		showhelp=T
 	}
 	if (!("variant_file" %in% names(argv))){
