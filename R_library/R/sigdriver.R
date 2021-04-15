@@ -35,6 +35,7 @@ sigDriver <- function(signature_test,
 	sampleinfo = filter_sample_info_matrix_by_vrange(sampleinfo=sampleinfo,somaticvarranges=somaticvarranges)
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
+	print(head(sampleinfofiltered))
 
 	#keep only tumors to be tested in variants table
 	gns = generate_testing_unit_genomic_bins(somaticvarranges)
