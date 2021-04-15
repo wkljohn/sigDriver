@@ -19,6 +19,13 @@ sigDriver <- function(signature_test,
 	require(dplyr)
 	require(data.table)
 	#require(sigDriver)
+	
+	#tweak cut-off for signatures with lower median sample mutation load
+	if (signature_test == "SBS84" || signature_test == "SBS9"){
+		print("lower sample mutation load mode")
+		minentityposcasespct = 2
+	}
+	
 
 	#run preparation
 	somaticvarranges = read_variants_ranges(variant_file)

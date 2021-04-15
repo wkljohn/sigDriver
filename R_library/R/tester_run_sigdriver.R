@@ -6,10 +6,11 @@ library(optparse)
 #testing
 if (F){
 	#Rscript sigdriver.R /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv SBS2 /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/scripts/R_association/testing/release/output/
-	#APOBECCOMBINE  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1ORG_combine_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1ORG_combine_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/ -t 16\"  run_sigdriver.R"}'
-	#PCAWG  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv "$0" /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/\" sigdriver.R"}'
+	#PCAWG  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/ -t 16\"  tester_run_sigdriver.R"}' | grep -v "SBS7\s"
+	
 	#:MELA  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.tsv "$0" /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/\" sigdriver.R"}' | grep SBS7
-	#PCAWGE cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv "$0" /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/\" sigdriver.R"}' | grep -v EX7
+	#PCAWGE cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/ -t 16\" tester_run_sigdriver.R"}' | grep -v EX7
+	
 	#:MELA	cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.tsv "$0" /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/\" sigdriver.R"}' | grep  EX7
 	#PCAWGP cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_PENTA_NOART_raw_exposure.tsv | sed '1d' | awk '{print "bsub -m \"abi-cn24u12 abi-cn24u11 abi-cn24u13 abi-cn24u14 abi-cn24u15 abi-cn24u16 abi-cn24u17 abi-cn24u18 abi-cn24u19 abi-cn24u20 abi-cn24u21 abi-cn24u22 odcf-cn34u03s07 odcf-cn34u03s10 odcf-cn34u09s12 odcf-cn34u18s01 odcf-cn34u18s02 odcf-cn34u18s03 odcf-cn34u18s04 odcf-cn34u18s05 odcf-cn34u18s11 odcf-cn34u18s12 odcf-cn31u17\" -q verylong -n 16 -M 40G  -R \"span[hosts=1] rusage[mem=40GB]\" -o \""$0"\".log -e \""$0".err\"  \"module load r/3.6.0;module load gcc/7.2.0; Rscript run_sigdriver.R -v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_PENTA_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/\""}' | grep -v "SBS7\s"
 	#PCAWGPQ cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_PENTA_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_PENTA_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k/ -t 16\"  run_sigdriver.R"}' | grep -v "SBS7\s"
@@ -151,8 +152,54 @@ if (!file.exists(out_path)){
 }
 
 
-require(sigDriver)
-sigDriver(signature_test=signature_test,
+library(R.utils)
+library(sigDriver)
+
+altsigDriver <- function (signature_test, variant_file, signature_file, covar_file,
+    out_path, threads)
+{		
+    require(GenomicRanges)
+    require(dplyr)
+    require(data.table)
+		print("sigDriver tester")
+		print("sigDriver tester")
+		print("sigDriver tester")
+		print("sigDriver tester")
+		print("sigDriver tester")
+		print("sigDriver tester")
+		print("sigDriver tester")
+		print("sigDriver tester")
+    somaticvarranges = sigDriver:::read_variants_ranges(variant_file)
+    sigexpinfo = sigDriver:::read_signature_exposures_matrix(signature_file)
+    sampleinfo = sigDriver:::read_metadata_matrix(covar_file, sigDriver:::covariates)
+    sampleinfo = sigDriver:::merge_signature_samples(sampleinfo = sampleinfo,
+        sigexpinfo = sigexpinfo, signature_test = signature_test,
+        thresholdhypmutation = sigDriver:::thresholdhypmutation)
+    sampleinfo = sigDriver:::filter_sample_info_matrix_by_vrange(sampleinfo = sampleinfo,
+        somaticvarranges = somaticvarranges)
+    entities_include = sigDriver:::get_signature_positive_entities(sampleinfo = sampleinfo,
+        minentityposcasespct = sigDriver:::minentityposcasespct, maxentityposcasespct = sigDriver:::maxentityposcasespct)
+    sampleinfofiltered = sigDriver:::filter_sample_info_matrix(sampleinfo = sampleinfo,
+        sigexpinfo = sigexpinfo, entities_include = entities_include)
+    gns = sigDriver:::generate_testing_unit_genomic_bins(somaticvarranges)
+    somaticvarranges = sigDriver:::samplefilter_somatic_vranges(somaticvarranges,
+        sampleinfofiltered)
+    gns = sigDriver:::prefilter_genomic_bins(gns, somaticvarranges, sigDriver:::framesize_pruned,
+        sigDriver:::frame_pruned_min_nvar)
+    somaticvarranges = sigDriver:::prefilter_somatic_vranges(gns, somaticvarranges)
+    somaticvarranges = sigDriver:::split_variants_GR_by_chr(somaticvarranges)
+    outfile = paste(out_path, "/", signature_test, "_intermediate_results.tsv",
+        sep = "")
+    write.table(sampleinfofiltered,paste(out_path, "/", signature_test, "_run_sample_info.tsv",
+        sep = ""))
+}
+
+#unlockBinding("sigDriver", as.environment("package:sigDriver"))
+#assign("sigDriver ", altsigDriver , as.environment("package:sigDriver"))
+#lockBinding("sigDriver ", as.environment("package:sigDriver"))  
+reassignInPackage("sigDriver", pkgName="sigDriver", altsigDriver)
+
+altsigDriver(signature_test=signature_test,
           variant_file,
 					signature_file,
 					covar_file,
