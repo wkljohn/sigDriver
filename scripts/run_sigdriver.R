@@ -44,7 +44,7 @@ if (T){
 	#Rscript sigdriver.R -s SBS13 -v /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/somatic_SNVs/simple/CATCH_all_SNV_filtart.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/signatures/CATCH/SNVs_consensus/merged_CATCH_exposure_SBS_withSPID_forsigdrive.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.tsv -o /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/drivers/CATCH/test/
 
 	help_message <-
-"usage: Rscript sigdriver.R [options] <-s signature test> <-v simple variant file> <-e signature exposures file> <-m metadata file> <-o out path>
+"usage: Rscript run_sigdriver.R [options] <-s signature test> <-v simple variant file> <-e signature exposures file> <-m metadata file> <-o out path>
 
 Required:
     --signature | -s        Name of the signature to test
