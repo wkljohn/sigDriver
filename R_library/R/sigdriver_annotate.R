@@ -26,6 +26,13 @@ sigDriver_annotate <- function(signature_test,
 	library(dplyr,quietly=T)
 	library(rtracklayer,quietly=T)
 
+	#tweak cut-off for signatures with lower median sample mutation load
+	if (signature_test == "SBS84" || signature_test == "SBS9"){
+		print("lower sample mutation load mode")
+		minentityposcasespct = 0.02
+		min_testing_bin_vars = 7
+		frame_pruned_min_nvar = 7
+	}
 
 	#run preparation, small differences with sigdriver main routine
 	sigdriver_results = read.table(results_file,sep="\t",header=T,stringsAsFactors=F)
