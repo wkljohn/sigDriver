@@ -253,7 +253,8 @@ doassocandwriteSKAThotspot <- function (igene,
 			 obj$id_include = samplemetatablewithentity$ID
 			varframebycasemat = as.matrix(t(varframebycase))
 			#SKAT test on the genotype matrix given outcome-confounders obj
-			print("DOING SKATO")
+			#print("DOING SKATO")
+			print("DOING SKAT multi rho")
 			
 			#DEBUGGER
 			if (verbose==1){ 
@@ -263,7 +264,8 @@ doassocandwriteSKAThotspot <- function (igene,
 			  print(head(varframebycasemat[head(order(rowSums(varframebycasemat),decreasing = T)),]))
 			}
 			
-			out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKATO")
+			#out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKATO")
+			out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKAT", r.corr=seq(0,1,0.1))
 			  
 			if (verbose==1 && !is.null(out$p.value.resampling)){
 			  print(min(out$p.value.resampling))
