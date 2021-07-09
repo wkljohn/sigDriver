@@ -265,7 +265,8 @@ doassocandwriteSKAThotspot <- function (igene,
 			}
 			
 			#out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKATO")
-			out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKAT", r.corr=seq(0,1,0.1))
+			out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="Burden")
+			#out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKAT", r.corr=seq(0,1,0.1))
 			  
 			if (verbose==1 && !is.null(out$p.value.resampling)){
 			  print(min(out$p.value.resampling))
