@@ -320,3 +320,12 @@ plot_qq <- function(resultsSKATdf,outpath){
 	qq(resultsSKATp)
 	dev.off()
 }
+
+calculate_lambda <- function(resultsSKATdf){
+	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
+	z = qnorm(resultsSKATp / 2)
+	lambda = round(median(z^2) / 0.454, 3)
+	return(lambda)
+}
+
+
