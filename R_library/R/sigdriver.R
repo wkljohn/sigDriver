@@ -12,6 +12,7 @@ sigDriver <- function(signature_test,
 											variant_file,
 											signature_file,
 											covar_file,
+											testregions,
 											out_path,
 											threads){
 	#Libraries
@@ -54,6 +55,8 @@ sigDriver <- function(signature_test,
 
 	#keep only tumors to be tested in variants table
 	gns = generate_testing_unit_genomic_bins(somaticvarranges)
+	#filter if whitelist exists
+  if (!is.na(testregions)) gns=genomic_bins_filter_whitelist(testregions,gns)
 	#first filt variant range by sample list
 	somaticvarranges = samplefilter_somatic_vranges(somaticvarranges,sampleinfofiltered)
 	#reduce the bins to test by variant distance
