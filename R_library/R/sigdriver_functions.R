@@ -245,12 +245,13 @@ generate_testing_unit_genomic_bins <- function(somaticvarranges){
 
 
 genomic_bins_filter_whitelist <- function(testregions,gns){
-  	whitelist_regions = read.table(testregions,stringsAsFactors=F)
-  	whitelist_regions_df = data.frame(do.call(rbind,strsplit(whitelist_regions[,1],"[:|-]")),stringsAsFactors=F)
-  	colnames(whitelist_regions_df) = c("Chr","start","end")
-  	whitelist_regions_GR = makeGRangesFromDataFrame(whitelist_regions_df)
-  	gns = subsetByOverlaps(gns, whitelist_regions_GR, type="equal")
-  	return(gns)
+	whitelist_regions = read.table(testregions,stringsAsFactors=F)
+	whitelist_regions_df = data.frame(do.call(rbind,strsplit(whitelist_regions[,1],"[:|-]")),stringsAsFactors=F)
+	colnames(whitelist_regions_df) = c("Chr","start","end")
+	whitelist_regions_GR = makeGRangesFromDataFrame(whitelist_regions_df)
+	gns = subsetByOverlaps(gns, whitelist_regions_GR, type="equal")
+	print(paste("Filtering by whitelist",length(gns)))
+	return(gns)
 }
 
 samplefilter_somatic_vranges <- function(somaticvarranges,sampleinfo){
