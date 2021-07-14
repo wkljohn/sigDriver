@@ -241,9 +241,11 @@ doassocandwriteSKAThotspot <- function (igene,
       #  obj<-SKAT_Null_Model_ChrX( normsig ~ Entity + nvar + log2(nvar + 1)+ gender, SexVar="gender",out_type="C")
       #}else{
       if (length(unique(samplemetatablewithentity$entity)) == 1){
-        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+        #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
       }else{
-        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+        #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
       }
         #}
       

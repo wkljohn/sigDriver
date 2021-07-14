@@ -18,7 +18,7 @@ if (F){
 	#::BSUB cut -f 1 /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/signatures/CATCH/SNVs_consensus/merged_CATCH_exposure_SBS_withSPID_forsigdrive.tsv | sed '1d' | awk '{print "bsub  -q verylong -n 16 -m \"abi-cn24u12 abi-cn24u11 abi-cn24u13 abi-cn24u14 abi-cn24u15 abi-cn24u16 abi-cn24u17 abi-cn24u18 abi-cn24u19 abi-cn24u20 abi-cn24u21 abi-cn24u22 odcf-cn34u03s07 odcf-cn34u03s10 odcf-cn34u09s12 odcf-cn34u18s01 odcf-cn34u18s02 odcf-cn34u18s03 odcf-cn34u18s04 odcf-cn34u18s05 odcf-cn34u18s11 odcf-cn34u18s12 odcf-cn31u17\" -M 30G  -R \"span[hosts=1] rusage[mem=30GB]\" -o \"CATCH"$0".log\" -e \"CATCH"$0".err\" \"Rscript sigdriver.R /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/somatic_SNVs/simple/CATCH_all_SNV_filtart_consensus.simple.gz /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/signatures/CATCH/SNVs_consensus/merged_CATCH_exposure_SBS_withSPID_forsigdrive.tsv /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/metadata/CATCH_exposure_SBS_withSPID_forsigdrive.tsv "$0" /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/drivers/CATCH/\" "}'
 	
 	#################REVIEW2#####################
-	#PCAWG  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_BS1K_1PCT/ -t 16\"  run_sigdriver.R"}' | egrep "SBS10a| SBS2 |SBS17a|SBS15|SBS16| SBS3 "
+	#PCAWG  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_BS1K_1PCT_woLOG2NVAR/ -t 16\"  run_sigdriver.R"}' | egrep "SBS1 |SBS10a| SBS2 |SBS17a|SBS15|SBS16| SBS3 "
 	
 	variant_file="/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz"
 	signature_file="/b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv"
@@ -64,8 +64,7 @@ Options:
     --threads   | -t        Number of threads (default:1)
     --regions   | -r        Whitelist file for regions (<chr>:<start>-<end>)
     --help      | -h        Show this help message
-"
-  testregions=NA               
+"           
 	option_list <- list(
 	  # Base file
 	  make_option(c("-s", "--signature"), type = "character", dest = "signature_test"),
@@ -120,15 +119,16 @@ Options:
 	variant_file = argv$variant_file
 	signature_file = argv$signature_file
 	covar_file = argv$covar_file
+	testregions = argv$testregions
 	out_path = argv$out_path
 	threads = argv$threads
 
-        #check file exists
-        if (!file.exists(variant_file)){ stop("Variant file not found") }
-        if (!file.exists(covar_file)){ stop("Metadata file not found") }
-        if (!is.na(testregions) && !file.exists(testregions)){ stop("whitelist regions file not found") }
-        if (!file.exists(signature_file)){ stop("Signature file not found") }
-	
+  #check file exists
+  if (!file.exists(variant_file)){ stop("Variant file not found") }
+  if (!file.exists(covar_file)){ stop("Metadata file not found") }
+  if (!is.na(testregions) && !file.exists(testregions)){ stop("whitelist regions file not found") }
+  if (!file.exists(signature_file)){ stop("Signature file not found") }
+
 	#parameters overview
 	cat("=======================================\n")
 	cat(paste("Signature to test: ",signature_test,"\n",sep=""))
