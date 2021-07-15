@@ -13,6 +13,7 @@ sigDriver <- function(signature_test,
 											signature_file,
 											covar_file,
 											testregions,
+											context_file,
 											out_path,
 											threads){
 	#Libraries
@@ -34,9 +35,11 @@ sigDriver <- function(signature_test,
 	
 	#run preparation
 	somaticvarranges = read_variants_ranges(variant_file)
+  if (!is.na(context_file)) contextinfo = sigDriver:::read_context_frequency_matrix(context_file)
 	sigexpinfo = read_signature_exposures_matrix(signature_file)
 	sampleinfo = read_metadata_matrix(covar_file,covariates)
 	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation)
+  if (!is.na(context_file)) sampleinfo = merge_context_samples(sampleinfo,contextinfo)
 	sampleinfo = filter_sample_info_matrix_by_vrange(sampleinfo=sampleinfo,somaticvarranges=somaticvarranges)
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
@@ -69,6 +72,16 @@ sigDriver <- function(signature_test,
 	outfile = paste(out_path,"/",signature_test,"_intermediate_results.tsv",sep="")
 	write(paste("Gene","regions","markers","marker_snvs","n.samples","Q","p.value","entity","entityvar",sep=" "),file=outfile)	
 
+	#create null model
+	print("Generating null model...")
+	if (length(unique(samplemetatablewithentity$entity)) == 1){
+    #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+    nullSKATmodel<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$gender, out_type="C",n.Resampling=10000,type.Resampling="bootstrap")
+  }else{
+    #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+    nullSKATmodel<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$total_variants + samplemetatablewithentity$gender, out_type="C",n.Resampling=10000,type.Resampling="bootstrap")
+  }
+    
 	#init parallelization
 	gc()
 	if (threads > 1){
@@ -80,12 +93,12 @@ sigDriver <- function(signature_test,
 		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
 		}
 	  
-		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel)
 		#resultsSKAT=parSapply(cl, 1:16, doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 		stopCluster(cl)
 	}else{
 		print("Starting without parallelization...")
-		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel)
 
 	}
 	

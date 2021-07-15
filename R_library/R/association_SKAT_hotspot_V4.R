@@ -4,6 +4,7 @@
 doassocandwriteSKAThotspot <- function (igene,
                              bigtabledesc,gns,somaticvarranges,outfile,
                              samplemetatablewithentity,sigtest,pathfile,varianttype,
+                             nullSKATmodel,
                              verbose=0){
   #require(bigmemory)
   require(GenomicRanges)
@@ -230,7 +231,7 @@ doassocandwriteSKAThotspot <- function (igene,
       #samplemetatablewithentity$rank   ,produce bad p for background EX1,SBS1
       #
       if (verbose==1) print("DOING SKAT")
-			#obj<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")#, type.Resampling="bootstrap", Adjustment=TRUE,n.Resampling=10000)
+			#nullSKATmodel<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")#, type.Resampling="bootstrap", Adjustment=TRUE,n.Resampling=10000)
       
       #handle sex chromosomes
       samplemetatablewithentity$gender = as.factor(samplemetatablewithentity$gender)
@@ -238,21 +239,21 @@ doassocandwriteSKAThotspot <- function (igene,
       if (verbose==1) print(table(samplemetatablewithentity$gender))
       #if (idxchr == 23){
       #  attach(samplemetatablewithentity)
-      #  obj<-SKAT_Null_Model_ChrX( normsig ~ Entity + nvar + log2(nvar + 1)+ gender, SexVar="gender",out_type="C")
+      #  nullSKATmodel<-SKAT_Null_Model_ChrX( normsig ~ Entity + nvar + log2(nvar + 1)+ gender, SexVar="gender",out_type="C")
       #}else{
-      if (length(unique(samplemetatablewithentity$entity)) == 1){
-        #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
-        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="bootstrap")
-      }else{
-        #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
-        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$total_variants + samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="bootstrap")
-      }
+#      if (length(unique(samplemetatablewithentity$entity)) == 1){
+#        #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+#        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="bootstrap")
+#      }else{
+#        #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+#        obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$total_variants + samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="bootstrap")
+#      }
         #}
       
 			#samplemetatablewithentity$entitsiglevel 
 			#samplemetatablewithentity$entity
 			
-			 obj$id_include = samplemetatablewithentity$ID
+			 nullSKATmodel$id_include = samplemetatablewithentity$ID
 			varframebycasemat = as.matrix(t(varframebycase))
 			#SKAT test on the genotype matrix given outcome-confounders obj
 			#print("DOING SKATO")
@@ -266,9 +267,9 @@ doassocandwriteSKAThotspot <- function (igene,
 			  print(head(varframebycasemat[head(order(rowSums(varframebycasemat),decreasing = T)),]))
 			}
 			
-			out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKATO")
-			#out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="Burden")
-			#out = SKAT(varframebycasemat, obj, weights=weightframencLIST, method="SKAT", r.corr=seq(0,1,0.1))
+			out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="SKATO")
+			#out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="Burden")
+			#out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="SKAT", r.corr=seq(0,1,0.1))
 			  
 			if (verbose==1 && !is.null(out$p.value.resampling)){
 			  print(min(out$p.value.resampling))

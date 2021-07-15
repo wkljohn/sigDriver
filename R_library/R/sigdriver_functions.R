@@ -18,6 +18,18 @@ read_signature_exposures_matrix <- function(signature_file){
 	return(sigexpinfo)
 }
 
+read_context_frequency_matrix <- function(context_file){
+	contextinfo =  read.table(context_file,header=T,check.names = F,row.names=1,sep="\t")
+
+	return(contextinfo)
+}
+
+merge_context_samples <- function(sampleinfo,contextinfo){
+	sampleinfo = merge(sampleinfo,t(contextinfo),by.x="ID",by.y="row.names")
+	colnames(sampleinfo) = gsub("(\\[|\\]|>)","_",colnames(sampleinfo))
+	return(sampleinfo)
+}
+
 merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation){
 	signorminfo = melt(colSums(sigexpinfo))
 	signorminfo$ID = rownames(signorminfo)
