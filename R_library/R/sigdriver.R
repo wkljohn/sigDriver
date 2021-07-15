@@ -73,13 +73,14 @@ sigDriver <- function(signature_test,
 	write(paste("Gene","regions","markers","marker_snvs","n.samples","Q","p.value","entity","entityvar",sep=" "),file=outfile)	
 
 	#create null model
+	require(SKAT)
 	print("Generating null model...")
-	if (length(unique(samplemetatablewithentity$entity)) == 1){
-    #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
-    nullSKATmodel<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$gender, out_type="C",n.Resampling=10000,type.Resampling="bootstrap")
+	if (length(unique(sampleinfofiltered$entity)) == 1){
+    #obj<-SKAT_Null_Model( sampleinfofiltered$sigRank ~ sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1)+ sampleinfofiltered$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C",n.Resampling=1000,type.Resampling="bootstrap")
   }else{
-    #obj<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
-    nullSKATmodel<-SKAT_Null_Model( samplemetatablewithentity$sigRank ~ samplemetatablewithentity$entity + log2(samplemetatablewithentity$total_variants + 1) + samplemetatablewithentity$total_variants + samplemetatablewithentity$gender, out_type="C",n.Resampling=10000,type.Resampling="bootstrap")
+    #obj<-SKAT_Null_Model( sampleinfofiltered$sigRank ~ sampleinfofiltered$entity + sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1)+ sampleinfofiltered$gender, out_type="C",n.Resampling=1000,type.Resampling="permutation")
+    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$entity + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$total_variants + sampleinfofiltered$gender, out_type="C",n.Resampling=1000,type.Resampling="bootstrap")
   }
     
 	#init parallelization
@@ -93,12 +94,12 @@ sigDriver <- function(signature_test,
 		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
 		}
 	  
-		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel)
+		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
 		#resultsSKAT=parSapply(cl, 1:16, doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 		stopCluster(cl)
 	}else{
 		print("Starting without parallelization...")
-		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel)
+		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
 
 	}
 	
@@ -121,11 +122,11 @@ sigDriver <- function(signature_test,
 			outfile=outfile,
 			samplemetatablewithentity=sampleinfofiltered,
 			sigtest=signature_test,pathfile="",
-			varianttype=50) 
+			varianttype=50,nullSKATmodel=nullSKATmodel) 
 			
 		
 		igene=which(gns$SYMBOL=="chr1:206858001-206860001")
-		resultsSKAT=parSapply(cl, (igene-100):(igene+100), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
+		resultsSKAT=parSapply(cl, (igene-100):(igene+100), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
 		
 
 	}

@@ -280,13 +280,20 @@ doassocandwriteSKAThotspot <- function (igene,
 			
 			if (verbose==1) print(out)
 			
+			#get p-value by null model type
+			if (nullSKATmodel$n.Resampling > 0){
+				pval=Get_Resampling_Pvalue(out)
+			}else{
+				pval=out$p.value
+			}
+			
 			if (is.na(out$Q)){
 			  qvaluescast=paste(out$param$q.val.each,collapse=",")
 			  pvaluescast=paste(out$param$p.val.each,collapse=",")
-			  rtnvar=c(genetest,testedRegionCoordinates,out$param$n.marker.test,sum(varframebycase),dim(samplemetatablewithentity)[1],qvaluescast,out$p.value,pvaluescast,paste(t(tmpdcast),collapse=" "))
+			  rtnvar=c(genetest,testedRegionCoordinates,out$param$n.marker.test,sum(varframebycase),dim(samplemetatablewithentity)[1],qvaluescast,pval,pvaluescast,paste(t(tmpdcast),collapse=" "))
 			  rtnline=rtnline=paste(rtnvar,collapse=" ",sep=" ")
 			}else{
-			  rtnvar=c(genetest,testedRegionCoordinates,out$param$n.marker.test,sum(varframebycase),dim(samplemetatablewithentity)[1],out$Q,out$p.value,"NA",paste(t(tmpdcast),collapse=" "))
+			  rtnvar=c(genetest,testedRegionCoordinates,out$param$n.marker.test,sum(varframebycase),dim(samplemetatablewithentity)[1],out$Q,pval,"NA",paste(t(tmpdcast),collapse=" "))
 			  rtnline=paste(rtnvar,collapse=" ",sep=" ")
 			}
 			
