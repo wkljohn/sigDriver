@@ -282,7 +282,8 @@ doassocandwriteSKAThotspot <- function (igene,
 			
 			#get p-value by null model type
 			if (nullSKATmodel$n.Resampling > 0){
-				pval=Get_Resampling_Pvalue(out)
+				pval1=Get_Resampling_Pvalue(out)
+				pval=pval$p.value
 			}else{
 				pval=out$p.value
 			}
