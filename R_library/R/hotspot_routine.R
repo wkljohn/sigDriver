@@ -19,7 +19,8 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
       divfrompeak = 0.99
     }else{
       #refineframesize=5
-      framesize = 30
+      #framesize = 30
+      framesize = 50
       framesizeweightsize = 12
       
       

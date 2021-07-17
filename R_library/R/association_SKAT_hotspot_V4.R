@@ -267,7 +267,6 @@ doassocandwriteSKAThotspot <- function (igene,
 			  print(head(varframebycasemat[head(order(rowSums(varframebycasemat),decreasing = T)),]))
 			}
 			
-			weightframencLIST=1
 			out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="SKATO")
 			#out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="Burden")
 			#out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="SKAT", r.corr=seq(0,1,0.1))
