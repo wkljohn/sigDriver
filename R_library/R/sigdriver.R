@@ -102,12 +102,12 @@ sigDriver <- function(signature_test,
 		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
 		}
 	  
-		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
+		resultsSKAT=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKATPLUShotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
 		#resultsSKAT=parSapply(cl, 1:16, doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 		stopCluster(cl)
 	}else{
 		print("Starting without parallelization...")
-		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
+		resultsSKAT=lapply(1:length(gns$SYMBOL), doassocandwriteSKATPLUShotspot, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50,nullSKATmodel=nullSKATmodel)
 
 	}
 	
