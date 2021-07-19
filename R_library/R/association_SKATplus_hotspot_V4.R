@@ -277,10 +277,10 @@ doassocandwriteSKATPLUShotspot <- function (igene,
 			while (permtimes < 10000 && cntp_non_zero < 2){
 				out = SKATplus(samplemetatablewithentity$normalized_exposures,varframebycasemat,covarmatrix ,out_type="C",permutation=TRUE,B=1000)
 				p_list[[length(p_list) + 1]] = out$p.value
-				if (out$p.value > 0){
+				if (out$p.value > 0.0000000001){
 					cntp_non_zero = cntp_non_zero + 1
 				}
-				permtimes += 1
+				permtimes = permtimes + 1
 			}
 			averagep = mean(do.call(rbind,p_list))
 			if (cntp_non_zero == 0){
