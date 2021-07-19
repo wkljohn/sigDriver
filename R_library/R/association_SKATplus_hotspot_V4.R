@@ -280,6 +280,7 @@ doassocandwriteSKATPLUShotspot <- function (igene,
 				if (out$p.value > 0){
 					cntp_non_zero = cntp_non_zero + 1
 				}
+				permtimes += 1
 			}
 			averagep = mean(do.call(rbind,p_list))
 			if (cntp_non_zero == 0){
