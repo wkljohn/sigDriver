@@ -19,8 +19,8 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
       divfrompeak = 0.99
     }else{
       #refineframesize=5
-      #framesize = 30
-      framesize = 50
+      framesize = 30
+      #framesize = 50
       framesizeweightsize = 12
       
       
@@ -46,7 +46,10 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
   variantRanges = sort(variantRanges,ignore.strand=TRUE)
   variantRanges = as.data.table(variantRanges)
   rownames(samplemetatablewithentity) = samplemetatablewithentity$ID 
-  variantRanges$total_variants = log2(nvarmedian + 1)/log2(samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants + 1)
+  
+  #weighting on the window
+  variantRanges$total_variants[T] = 1
+  #variantRanges$total_variants = log2(nvarmedian + 1)/log2(samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants + 1)
   #variantRanges$total_variants = (samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants - nvarmedian) / sd(samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants)
   #variantRanges$total_variants[which(variantRanges$total_variants >= 0)] = 1 / (variantRanges$total_variants[which(variantRanges$total_variants >= 0)] + 1)
   #variantRanges$total_variants[which(variantRanges$total_variants < 0)] = 2^(-variantRanges[variantRanges$total_variants < 0,]$total_variants + 1)
