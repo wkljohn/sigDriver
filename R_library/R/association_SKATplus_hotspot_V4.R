@@ -29,7 +29,7 @@ doassocandwriteSKATPLUShotspot <- function (igene,
     }
   
   
-  #out <- tryCatch({
+  out <- tryCatch({
 	  lookuparray = data.frame(cbind(c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX","chrY"),
 	                                 c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)),stringsAsFactors = FALSE)
 	  rownames(lookuparray) = lookuparray$X1
@@ -255,6 +255,7 @@ doassocandwriteSKATPLUShotspot <- function (igene,
 			
 			#nullSKATmodel$id_include = samplemetatablewithentity$ID
 			varframebycasemat = as.matrix(t(varframebycase))
+			varframebycasemat_weighted = varframebycasemat %*% diag(weightframencLIST)
 			#SKAT test on the genotype matrix given outcome-confounders obj
 			#print("DOING SKATO")
 			print("DOING SKAT multi rho")
@@ -269,22 +270,32 @@ doassocandwriteSKATPLUShotspot <- function (igene,
 			
 			#out = SKAT(varframebycasemat, nullSKATmodel, weights=weightframencLIST, method="SKATO")
 			
-			covarmatrix = model.matrix(~ samplemetatablewithentity$entity +  I(samplemetatablewithentity$A_C_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_T_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_T_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_T_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_C_T_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_T_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_T_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_T_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_C_T_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_T_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_T_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_T_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_C_T_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_T_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_T_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_T_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_C_T_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_A_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_A_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_A_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_A_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_C_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_C_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_C_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_C_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_C_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_C_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_C_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_C_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_C_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_C_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_C_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_C_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_C_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_C_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_C_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_C_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$A_T_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$C_T_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$G_T_G_T/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_G_A/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_G_C/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_G_G/samplemetatablewithentity$total_variants)+I(samplemetatablewithentity$T_T_G_T/samplemetatablewithentity$total_variants) + samplemetatablewithentity$gender)
+			covarmatrix = model.matrix(~ entity +  I(A_C_A_A/total_variants)+I(A_C_A_C/total_variants)+I(A_C_A_G/total_variants)+I(A_C_A_T/total_variants)+I(C_C_A_A/total_variants)+I(C_C_A_C/total_variants)+I(C_C_A_G/total_variants)+I(C_C_A_T/total_variants)+I(G_C_A_A/total_variants)+I(G_C_A_C/total_variants)+I(G_C_A_G/total_variants)+I(G_C_A_T/total_variants)+I(T_C_A_A/total_variants)+I(T_C_A_C/total_variants)+I(T_C_A_G/total_variants)+I(T_C_A_T/total_variants)+I(A_C_G_A/total_variants)+I(A_C_G_C/total_variants)+I(A_C_G_G/total_variants)+I(A_C_G_T/total_variants)+I(C_C_G_A/total_variants)+I(C_C_G_C/total_variants)+I(C_C_G_G/total_variants)+I(C_C_G_T/total_variants)+I(G_C_G_A/total_variants)+I(G_C_G_C/total_variants)+I(G_C_G_G/total_variants)+I(G_C_G_T/total_variants)+I(T_C_G_A/total_variants)+I(T_C_G_C/total_variants)+I(T_C_G_G/total_variants)+I(T_C_G_T/total_variants)+I(A_C_T_A/total_variants)+I(A_C_T_C/total_variants)+I(A_C_T_G/total_variants)+I(A_C_T_T/total_variants)+I(C_C_T_A/total_variants)+I(C_C_T_C/total_variants)+I(C_C_T_G/total_variants)+I(C_C_T_T/total_variants)+I(G_C_T_A/total_variants)+I(G_C_T_C/total_variants)+I(G_C_T_G/total_variants)+I(G_C_T_T/total_variants)+I(T_C_T_A/total_variants)+I(T_C_T_C/total_variants)+I(T_C_T_G/total_variants)+I(T_C_T_T/total_variants)+I(A_T_A_A/total_variants)+I(A_T_A_C/total_variants)+I(A_T_A_G/total_variants)+I(A_T_A_T/total_variants)+I(C_T_A_A/total_variants)+I(C_T_A_C/total_variants)+I(C_T_A_G/total_variants)+I(C_T_A_T/total_variants)+I(G_T_A_A/total_variants)+I(G_T_A_C/total_variants)+I(G_T_A_G/total_variants)+I(G_T_A_T/total_variants)+I(T_T_A_A/total_variants)+I(T_T_A_C/total_variants)+I(T_T_A_G/total_variants)+I(T_T_A_T/total_variants)+I(A_T_C_A/total_variants)+I(A_T_C_C/total_variants)+I(A_T_C_G/total_variants)+I(A_T_C_T/total_variants)+I(C_T_C_A/total_variants)+I(C_T_C_C/total_variants)+I(C_T_C_G/total_variants)+I(C_T_C_T/total_variants)+I(G_T_C_A/total_variants)+I(G_T_C_C/total_variants)+I(G_T_C_G/total_variants)+I(G_T_C_T/total_variants)+I(T_T_C_A/total_variants)+I(T_T_C_C/total_variants)+I(T_T_C_G/total_variants)+I(T_T_C_T/total_variants)+I(A_T_G_A/total_variants)+I(A_T_G_C/total_variants)+I(A_T_G_G/total_variants)+I(A_T_G_T/total_variants)+I(C_T_G_A/total_variants)+I(C_T_G_C/total_variants)+I(C_T_G_G/total_variants)+I(C_T_G_T/total_variants)+I(G_T_G_A/total_variants)+I(G_T_G_C/total_variants)+I(G_T_G_G/total_variants)+I(G_T_G_T/total_variants)+I(T_T_G_A/total_variants)+I(T_T_G_C/total_variants)+I(T_T_G_G/total_variants)+I(T_T_G_T/total_variants) + gender,data=samplemetatablewithentity)
 			cntp_non_zero=0
 			p_list = list()
 			permtimes = 0
+			perm = T
 			
-			while (permtimes < 10000 && cntp_non_zero < 2){
-				out = SKATplus(samplemetatablewithentity$normalized_exposures,varframebycasemat,covarmatrix ,out_type="C",permutation=TRUE,B=1000)
-				p_list[[length(p_list) + 1]] = out$p.value
-				if (out$p.value > 0.0000000001){
-					cntp_non_zero = cntp_non_zero + 1
+			#permutation p or not
+			if (perm){
+				while (permtimes < 10000 && cntp_non_zero < 2){
+					#varframebycasemat_weighted or varframebycasemat
+					out = SKATplus(samplemetatablewithentity$normalized_exposures,varframebycasemat,covarmatrix ,out_type="C",permutation=TRUE,B=1000)
+					p_list[[length(p_list) + 1]] = out$p.value
+					if (out$p.value > 0.0000000001){
+						cntp_non_zero = cntp_non_zero + 1
+					}
+					permtimes = permtimes + 1
 				}
-				permtimes = permtimes + 1
-			}
-			averagep = mean(do.call(rbind,p_list))
-			if (cntp_non_zero == 0){
-				averagep = 1 / (permtimes * 1000)
+				averagep = mean(do.call(rbind,p_list))
+				if (cntp_non_zero == 0){
+					averagep = 1 / (permtimes * 1000)
+				}
+			}else{
+				#not working in big complexity
+				out = SKATplus(samplemetatablewithentity$normalized_exposures,varframebycasemat,covarmatrix ,out_type="C")
+				averagep = out$p.value
+				
 			}
 
 			
@@ -292,7 +303,7 @@ doassocandwriteSKATPLUShotspot <- function (igene,
 			if (verbose==1) print(out)
 			
 			
-		  rtnvar=c(genetest,testedRegionCoordinates,out$parameter[1],sum(varframebycase),dim(samplemetatablewithentity)[1],out$statistic,averagep,"N",paste(t(tmpdcast),collapse=" "))
+		  rtnvar=c(genetest,testedRegionCoordinates,out$parameter[1],sum(varframebycase),dim(samplemetatablewithentity)[1],out$statistic,averagep,permtimes,paste(t(tmpdcast),collapse=" "))
 		  rtnline=paste(rtnvar,collapse=" ",sep=" ")
 
       #print(paste(genetest,coef(summary(g))[2,1],coef(summary(g))[2,4],adjsandwitch[2,1],paste(adjsandwitch[,4],collapse = " "),sep=" "))
@@ -309,12 +320,12 @@ doassocandwriteSKATPLUShotspot <- function (igene,
       
     }
    
-#  },
-#  error=function(cond) {
-#    rtnvar=c(genetest,"ERR","ERR","ERR")
-#    rtnline=paste(rtnvar,collapse=" ",sep=" ")
-#    print(rtnline)
-#    write(rtnline,file=outfile,append=TRUE)
-#    return(rtnvar)
-#  })
+  },
+  error=function(cond) {
+    rtnvar=c(genetest,"ERR","ERR","ERR")
+    rtnline=paste(rtnvar,collapse=" ",sep=" ")
+    print(rtnline)
+    write(rtnline,file=outfile,append=TRUE)
+    return(rtnvar)
+  })
 }
