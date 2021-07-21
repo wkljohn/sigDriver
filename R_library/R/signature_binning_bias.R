@@ -107,7 +107,7 @@ getBinSignatureRepresentation <- function (igene,
 	    idxchr = lookuparray[as.character(seqnames(testgns1gene)[1]),]$X2
 	    variantsassociated = somaticvarranges[[idxchr]][somaticvarranges[[idxchr]]$case_ID %in% samplemetatablewithentity$ID, ]
 	    listvarinregion = unique(splitByOverlaptolist(testgns1gene, variantsassociated, "SYMBOL"))
-	    topregions <- sigDriver:::getregionTopMutatedRanges(testgns1gene,
+	    topregions <- getregionTopMutatedRanges(testgns1gene,
 	                                            variantsassociated[listvarinregion,], #somaticvarranges[[idxchr]],
 	                                            samplemetatablewithentity$ID,
 	                                            samplemetatablewithentity,
