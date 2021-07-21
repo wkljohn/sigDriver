@@ -135,7 +135,7 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
       }else if (dim(mutationfreqlistframe[minimum_allowedbins,])[1] >= minimumframeinclude){
         mutationfreqlistframe = mutationfreqlistframe[c(1:minimumframeinclude),]
 			}else{
-				mutationfreqlistframe = c()
+				mutationfreqlistframe = data.frame()
       }
       
       #refine windows further if possible
