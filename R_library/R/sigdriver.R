@@ -38,6 +38,7 @@ sigDriver <- function(signature_test,
 	sigexpinfo = read_signature_exposures_matrix(signature_file)
 	sampleinfo = read_metadata_matrix(covar_file,covariates)
 	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation)
+	sampleinfo = merge_allsignature_samples(sampleinfo = sampleinfo,sigexpinfo = sigexpinfo)
 	sampleinfo = filter_sample_info_matrix_by_vrange(sampleinfo=sampleinfo,somaticvarranges=somaticvarranges)
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
