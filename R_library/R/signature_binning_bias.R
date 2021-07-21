@@ -11,7 +11,10 @@ signatureRepresentationAdjustment <- function(gns,
 		stopCluster(cl)
 		print(binStatsList)	#DEBUGGING
 		binStatsDF = do.call(rbind,binStatsList)
-		print(binStatsDF)	#DEBUGGING
+		print(head(binStatsDF))	#DEBUGGING
+		#[[6320]]
+		#NULL
+
 		binStatsMeans = data.frame(colMeans(binStatsDF),stringsAsFactors=F)
 		binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#get list of backgrounds, do not weight on background
