@@ -10,7 +10,7 @@ getWindowNVarWithWeight <- function(startcoord,endcoord,framesize,variantRanges)
 }
 
 #get max 5% mutated region for given genomic grange
-getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,samplemetatablewithentity,topProportion = 0.05,restricted=FALSE,minvariantinframe = 4,minimumframeinclude = 2,isCNV=FALSE){
+getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,samplemetatablewithentity,topProportion = 0.05,restricted=FALSE,minvariantinframe = 4,minimumframeinclude = 2,isCNV=FALSE,useSigWeight=FALSE){
   if (restricted){
     if (isCNV) {
       framesize = 10000
@@ -48,7 +48,11 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
   rownames(samplemetatablewithentity) = samplemetatablewithentity$ID 
   
   #weighting on the window
-  variantRanges$total_variants[T] = 1
+  if (useSigWeight){
+  	variantRanges$total_variants = variantRanges$WEIGHT
+  }else{
+  	variantRanges$total_variants[T] = 1
+  }
   #variantRanges$total_variants = log2(nvarmedian + 1)/log2(samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants + 1)
   #variantRanges$total_variants = (samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants - nvarmedian) / sd(samplemetatablewithentity[as.character(variantRanges$case_ID),]$total_variants)
   #variantRanges$total_variants[which(variantRanges$total_variants >= 0)] = 1 / (variantRanges$total_variants[which(variantRanges$total_variants >= 0)] + 1)

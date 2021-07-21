@@ -30,6 +30,13 @@ merge_context_samples <- function(sampleinfo,contextinfo){
 	return(sampleinfo)
 }
 
+merge_allsignature_samples <- function(sampleinfo,sigexpinfo){
+	normsig = (t(sigexpinfo)/colSums(sigexpinfo))
+	sampleinfo = merge(sampleinfo,normsig,by.x="ID",by.y="row.names")
+	colnames(sigexpinfo) = gsub("(\\[|\\]|>)","_",colnames(sigexpinfo))
+	return(sampleinfo)
+}
+
 merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation){
 	signorminfo = melt(colSums(sigexpinfo))
 	signorminfo$ID = rownames(signorminfo)

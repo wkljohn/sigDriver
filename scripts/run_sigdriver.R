@@ -21,7 +21,7 @@ if (F){
 	#PCAWG  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_BS1K_woBINW/ -t 16\"  run_sigdriver.R"}' | egrep "SBS1 |SBS10a| SBS2 |SBS17a|SBS15|SBS16| SBS3 | SBS39 | SBS84 | SBS13"
 	# | egrep " SBS9 | SBS84 | SBS6 | SBS13 | SBS39 | SBS84 | SBS37 "
 	# | egrep "SBS1 |SBS10a| SBS2 |SBS17a|SBS15|SBS16| SBS3 | SBS39 | SBS84"
-	#bsub_PCAWG: cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "bsub -q verylong -n 16 -M 30G  -R \"span[hosts=1] rusage[mem=30GB]\" -o \""$0"\".log -e \""$0".err\"  \"module load r/3.6.0;module load gcc/7.2.0; Rscript run_sigdriver.R -v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_woBINW/ -t 16\""}' |  egrep "SBS1 |SBS10a| SBS2 |SBS17a|SBS15|SBS16| SBS3 | SBS39 | SBS84 | SBS9 | SBS13 "
+	#bsub_PCAWG: cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv | sed '1d' | awk '{print "bsub -q verylong -n 16 -M 30G  -R \"span[hosts=1] rusage[mem=30GB]\" -o \""$0"\".log -e \""$0".err\"  \"module load r/3.6.0;module load gcc/7.2.0; Rscript run_sigdriver.R -v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.noeso.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_woBINW_exclEntE/ -t 16\""}' |  egrep "SBS1 |SBS10a| SBS2 |SBS17a|SBS15|SBS16| SBS3 | SBS39 | SBS84 | SBS9 | SBS13 "
 	 
 	
 	
@@ -81,6 +81,7 @@ Options:
 	  make_option(c("-o", "--out"), type = "character", dest = "out_path"),
 	  make_option(c("-t", "--threads"), type = "numeric", dest = "threads",default=1),
 	  make_option(c("-r", "--regions"), type = "character", dest = "testregions",default=NA),
+	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
 	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA)
 	)
 	
@@ -129,6 +130,7 @@ Options:
 	covar_file = argv$covar_file
 	testregions = argv$testregions
 	context_file = argv$context_file
+	backgroundsigs = argv$backgroundsigs
 	out_path = argv$out_path
 	threads = argv$threads
 
@@ -146,7 +148,7 @@ Options:
 	cat(paste("Signature file   : ",signature_file,"\n",sep=""))
 	cat(paste("medata file      : ",covar_file,"\n",sep=""))
 	cat(paste("test regions     : ",testregions,"\n",sep=""))
-	cat(paste("context file     : ",context_file,"\n",sep=""))
+	cat(paste("Background       : ",backgroundsigs,"\n",sep=""))
 	cat(paste("Output path      : ",out_path,"\n",sep=""))
 	cat(paste("Threads          : ",threads,"\n",sep=""))
 	cat("=======================================\n")
@@ -177,6 +179,6 @@ sigDriver(signature_test=signature_test,
 					signature_file,
 					covar_file,
 					testregions,
-					context_file,
+					backgroundsigs,
 					out_path,
 					threads)
