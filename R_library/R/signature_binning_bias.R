@@ -6,10 +6,10 @@ signatureRepresentationAdjustment <- function(gns,
                              samplemetatablewithentity,
                              threads){
    print("Calculating signature-bin distribution")
-		cl <- parallel::makeCluster(threads,useXDR=TRUE, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
+		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
 		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
-		print(head(binStatsList))	#DEBUGGING
+		#print(head(binStatsList))	#DEBUGGING
 		binStatsDF = do.call(rbind,binStatsList)
 		#print(head(binStatsDF))	#DEBUGGING
 		#[[6320]]
@@ -124,8 +124,8 @@ getBinSignatureRepresentation <- function (igene,
 		    #print(varframe$case_ID)
 		    #print(head(samplemetatablewithentity[varframe$case_ID,sigNames]))
 		    #calculate prevalence of signatures in a bin
-		    print(head(samplemetatablewithentity))
-		    print(head(varframe))
+		   	#print(head(samplemetatablewithentity))
+		    #print(head(varframe))
 		    sample_sig_table_pos5 = colSums(samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05) / length(varframe$case_ID)
 		    #print(sample_sig_table_pos5)#samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05)
 		    return(sample_sig_table_pos5)
