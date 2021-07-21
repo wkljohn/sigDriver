@@ -124,6 +124,8 @@ getBinSignatureRepresentation <- function (igene,
 		    #print(varframe$case_ID)
 		    #print(head(samplemetatablewithentity[varframe$case_ID,sigNames]))
 		    #calculate prevalence of signatures in a bin
+		    print(head(samplemetatablewithentity))
+		    print(head(varframe))
 		    sample_sig_table_pos5 = colSums(samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05) / length(varframe$case_ID)
 		    #print(sample_sig_table_pos5)#samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05)
 		    return(sample_sig_table_pos5)
