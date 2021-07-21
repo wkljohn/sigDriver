@@ -11,7 +11,7 @@ signatureRepresentationAdjustment <- function(gns,
 		stopCluster(cl)
 		print(binStatsList)	#DEBUGGING
 		binStatsDF = do.call(rbind,binStatsList)
-		print(head(binStatsDF))	#DEBUGGING
+		#print(head(binStatsDF))	#DEBUGGING
 		#[[6320]]
 		#NULL
 
