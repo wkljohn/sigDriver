@@ -7,7 +7,7 @@ signatureRepresentationAdjustment <- function(gns,
                              threads){
    print("Calculating signature-bin distribution")
 		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
-		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,sigweight=FALSE,sigNames=rownames(sigexpinfo))
+		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
 		binStatsDF = do.call(rbind,binStatsList)
 		binStatsMeans = data.frame(colMeans(binStatsDF),stringsAsFactors=F)
@@ -19,15 +19,13 @@ signatureRepresentationAdjustment <- function(gns,
 		#test binning weighting results
 		#compute weight on each variant
 		sigweight=binSignatureWeights
-		#samplemetatablewithentity=sampleinfofiltered
 		
 		print("Computing variant-wise weight")
 		sigweight=binSignatureWeights
 		backgroundsigsidx = which(rownames(sigexpinfo) %in%  c(signature_test,backgroundsigslist))
 		#preprocessing on matricies
-		samplemetatablewithentity = sampleinfofiltered
 		sigSampleInfoMatrix = samplemetatablewithentity[,rownames(sigexpinfo)]
-		rownames(sigSampleInfoMatrix) =  sampleinfofiltered$ID
+		rownames(sigSampleInfoMatrix) =  samplemetatablewithentity$ID
 		#signature positivity matrix
 		sigSampleInfoMatrix[sigSampleInfoMatrix>0.05] = 1
 		sigSampleInfoMatrix[sigSampleInfoMatrix<=0.05] = 0
