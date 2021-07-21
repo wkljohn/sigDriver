@@ -6,10 +6,10 @@ signatureRepresentationAdjustment <- function(gns,
                              samplemetatablewithentity,
                              threads){
    print("Calculating signature-bin distribution")
-		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
+		cl <- parallel::makeCluster(threads,useXDR=TRUE, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
 		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
-		print(binStatsList)	#DEBUGGING
+		print(head(binStatsList))	#DEBUGGING
 		binStatsDF = do.call(rbind,binStatsList)
 		#print(head(binStatsDF))	#DEBUGGING
 		#[[6320]]
@@ -134,5 +134,6 @@ getBinSignatureRepresentation <- function (igene,
   error=function(cond) {
     print(paste("Error:",cond))
     return(NULL)
+    #return(cond)
   })
 }
