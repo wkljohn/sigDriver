@@ -129,9 +129,10 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
     	includebins = which(mutationfreqlistframe$WEIGHTED > (maxmut*divfrompeak) & 
                            mutationfreqlistframe$WEIGHTED > (sdmut * SDsmaxthres) &
                            mutationfreqlistframe$WEIGHTED > minvariantinframe)
+    	minimum_allowedbins = which(mutationfreqlistframe$WEIGHTED > minvariantinframe)
       if (dim(mutationfreqlistframe[includebins,])[1] > minimumframeinclude){
         mutationfreqlistframe = mutationfreqlistframe[includebins,]
-      }else if (dim(mutationfreqlistframe)[1] >= minimumframeinclude){
+      }else if (dim(mutationfreqlistframe[minimum_allowedbins,])[1] >= minimumframeinclude){
         mutationfreqlistframe = mutationfreqlistframe[c(1:minimumframeinclude),]
 
       }
