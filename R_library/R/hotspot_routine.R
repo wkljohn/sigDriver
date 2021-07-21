@@ -127,7 +127,8 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
     #restricted frame vs jumbo frame : adopt to the expected motif size of Mutational signatures
     if (restricted){
       if (dim(mutationfreqlistframe[which( mutationfreqlistframe$WEIGHTED > (maxmut*divfrompeak) & 
-                                           mutationfreqlistframe$WEIGHTED > (sdmut * SDsmaxthres)),])[1] > minimumframeinclude){
+                                           mutationfreqlistframe$WEIGHTED > (sdmut * SDsmaxthres) &
+                                           mutationfreqlistframe$WEIGHTED > minvariantinframe ),])[1] > minimumframeinclude){
         mutationfreqlistframe = mutationfreqlistframe[which( mutationfreqlistframe$WEIGHTED > (maxmut*divfrompeak) & 
                                                                mutationfreqlistframe$WEIGHTED > (sdmut * SDsmaxthres)),]
       }else if (dim(mutationfreqlistframe)[1] >= minimumframeinclude){
