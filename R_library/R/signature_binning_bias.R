@@ -9,7 +9,9 @@ signatureRepresentationAdjustment <- function(gns,
 		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
 		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
+		print(binStatsList)	#DEBUGGING
 		binStatsDF = do.call(rbind,binStatsList)
+		print(binStatsDF)	#DEBUGGING
 		binStatsMeans = data.frame(colMeans(binStatsDF),stringsAsFactors=F)
 		binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#get list of backgrounds, do not weight on background
