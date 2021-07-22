@@ -19,7 +19,7 @@ signatureRepresentationAdjustment <- function(gns,
 		#method 1, weight only by prevalence
 		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#method 2, expectation diff
-		binSignatureWeights =  data.frame(1/(10^(binStatsMeans-sigExpPositivityInSamples)))
+		binSignatureWeights =  data.frame(1/(100^(binStatsMeans-sigExpPositivityInSamples)))
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
 		#weighting of background
@@ -96,7 +96,12 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  vrange_summary_site_sig_pos[vrange_summary_site_sig_pos>=0] = 1
 	  vrange_summary_site_sig_pos[vrange_summary_site_sig_pos<0] = NA
 	  vrange_summary_site = vrange_summary_site * vrange_summary_site_sig_pos	#keep only max
-	  vrange_summary_site$useweight =   rowMeans(vrange_summary_site[,rownames(sigexpinfo)],na.rm=T)
+	  vrange_summary_site$maxWeight = do.call(pmax,c(vrange_summary_site[,rownames(sigexpinfo)],list(na.rm=T)))
+	  vrange_summary_site$minWeight = do.call(pmin,c(vrange_summary_site[,rownames(sigexpinfo)],list(na.rm=T)))
+	  vrange_summary_site$maxWeight[vrange_summary_site$maxWeight < 1] = 1
+	  vrange_summary_site$minWeight[vrange_summary_site$minWeight > 1] = 1
+	  vrange_summary_site$useweight = vrange_summary_site$maxWeight * vrange_summary_site$minWeight
+	  #vrange_summary_site$useweight =   rowMeans(vrange_summary_site[,rownames(sigexpinfo)],na.rm=T)
 	  vrange_summary_site$useweight[is.nan(vrange_summary_site$useweight)] = 1
 	  #vrange_summary_site[vrange_summary_site$isTestsigMax,]$useweight = 1
 	  
