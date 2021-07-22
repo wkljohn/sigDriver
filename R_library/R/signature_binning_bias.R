@@ -9,17 +9,26 @@ signatureRepresentationAdjustment <- function(gns,
 		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
 		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
-		#print(head(binStatsList))	#DEBUGGING
 		binStatsDF = do.call(rbind,binStatsList)
-		#print(head(binStatsDF))	#DEBUGGING
-		#[[6320]]
-		#NULL
-
+		
+		#Compute signature exposures in samples
+		sigExpPositivityInSamples = colSums(samplemetatablewithentity[,rownames(sigexpinfo)] > 0.05) / dim(samplemetatablewithentity)[1]
+		
+		#Computer exposures in bins and create weight
 		binStatsMeans = data.frame(colMeans(binStatsDF),stringsAsFactors=F)
-		binSignatureWeights = data.frame((1-binStatsMeans)^2)
+		#method 1, weight only by prevalence
+		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
+		#method 2, expectation diff
+		binSignatureWeights =  data.frame(1/(10^(binStatsMeans-sigExpPositivityInSamples)))
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
-		binSignatureWeights[which(rownames(binSignatureWeights) %in% c(signature_test,backgroundsigslist)),] = 0
+		#weighting of background
+		binSignatureWeights[which(rownames(binSignatureWeights) %in% c(signature_test,backgroundsigslist)),] = 1
+		#weighting of signature
+		#upweight underrepresented signatures
+		if (sigExpPositivityInSamples[signature_test] < 0.1){
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1.5
+		}
 		
 		#test binning weighting results
 		#compute weight on each variant
@@ -59,20 +68,41 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 		vrange_summary_site = somaticvarrangesDF %>%
 	  group_by(start) %>%
 	  summarise_at(vars(rownames(sigexpinfo)), mean)
+	  vrange_summary_site_sig_pos = vrange_summary_site
+	  vrange_summary_site_sig_pos[,backgroundsigsidx+1] = 0
 	  vrange_summary_site$max_exp = do.call(pmax,  vrange_summary_site[,rownames(sigexpinfo)])
 	  #vrange_summary_site$isTestsigMax = vrange_summary_site[,signature_test] >= vrange_summary_site$max_exp
 	  
+	  #vrange_summary_site[,rownames(sigexpinfo)] = (1-vrange_summary_site[,rownames(sigexpinfo)]) + (t(t(vrange_summary_site[,rownames(sigexpinfo)]) * sigweight[,1]))
 	  vrange_summary_site[,rownames(sigexpinfo)] = (1-vrange_summary_site[,rownames(sigexpinfo)]) + (t(t(vrange_summary_site[,rownames(sigexpinfo)]) * sigweight[,1]))
 	  # (1-vrange_summary_site[756,rownames(sigexpinfo)]) + (vrange_summary_site[756,rownames(sigexpinfo)] * sigweight[,1])
 	  # vrange_summary_site[vrange_summary_site$start == 191784318,]
-	  vrange_summary_site[vrange_summary_site<0.0001] = 1
-	  vrange_summary_site[,backgroundsigsidx+1] = 1
-	  vrange_summary_site$min =   do.call(pmin,  vrange_summary_site[,rownames(sigexpinfo)])
-	  #vrange_summary_site[vrange_summary_site$isTestsigMax,]$min = 1
+	  #OLD
+	  #vrange_summary_site[vrange_summary_site<0.0001] = 1
+	  #vrange_summary_site[,backgroundsigsidx+1] = 1
+	  #NEW
+	  vrange_summary_site[0.9999 < vrange_summary_site  & vrange_summary_site < 1.0001] = NA
+	  vrange_summary_site[,backgroundsigsidx+1] = NA
+
+	  #weighting method
+	  #method 1: minimum
+	  #vrange_summary_site$useweight =   do.call(pmin, c( vrange_summary_site[,rownames(sigexpinfo)], list( na.rm=T)))
+	  #method 2: mean
+	  #vrange_summary_site$useweight =   rowMeans(vrange_summary_site[,rownames(sigexpinfo)],na.rm=T)
+	  #vrange_summary_site$useweight[is.nan(vrange_summary_site$useweight)] = 1
+	  #method 3: mean of all max
+	  vrange_summary_site_sig_pos$max_exp = do.call(pmax,  vrange_summary_site_sig_pos[,rownames(sigexpinfo)])
+	  vrange_summary_site_sig_pos = vrange_summary_site_sig_pos - vrange_summary_site_sig_pos$max_exp
+	  vrange_summary_site_sig_pos[vrange_summary_site_sig_pos>=0] = 1
+	  vrange_summary_site_sig_pos[vrange_summary_site_sig_pos<0] = NA
+	  vrange_summary_site = vrange_summary_site * vrange_summary_site_sig_pos	#keep only max
+	  vrange_summary_site$useweight =   rowMeans(vrange_summary_site[,rownames(sigexpinfo)],na.rm=T)
+	  vrange_summary_site$useweight[is.nan(vrange_summary_site$useweight)] = 1
+	  #vrange_summary_site[vrange_summary_site$isTestsigMax,]$useweight = 1
 	  
 	  vrange_summary_site = data.frame(vrange_summary_site,stringsAsFactors=F,row.names=vrange_summary_site$start)
 	 
-	  somaticvarranges[[i]]$WEIGHT = vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$min
+	  somaticvarranges[[i]]$WEIGHT = vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$useweight
 	  return(somaticvarranges[[i]])
 }
 
