@@ -36,6 +36,16 @@ merge_allsignature_samples <- function(sampleinfo,sigexpinfo){
 	colnames(sigexpinfo) = gsub("(\\[|\\]|>)","_",colnames(sigexpinfo))
 	return(sampleinfo)
 }
+merge_allsignature_byrank_samples <- function(sampleinfo,sigexpinfo){
+	normsig = (t(sigexpinfo)/colSums(sigexpinfo))
+	normsigrank = normsig
+	for (i in 1:dim(normsig)[2]){
+		normsigrank[,i] = rank(normsig[,i],ties.method = "min")
+	}
+	sampleinfo = merge(sampleinfo,normsigrank,by.x="ID",by.y="row.names")
+	colnames(sigexpinfo) = gsub("(\\[|\\]|>)","_",colnames(sigexpinfo))
+	return(sampleinfo)
+}
 
 merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation){
 	signorminfo = melt(colSums(sigexpinfo))
