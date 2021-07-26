@@ -21,7 +21,7 @@ signatureRepresentationAdjustment <- function(gns,
 		#method 1, weight only by prevalence
 		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#method 2, expectation diff
-		binSignatureWeights =  data.frame(1/(100^(binStatsMeans-sigExpPositivityInSamples)))
+		binSignatureWeights =  data.frame(1/(1000^(binStatsMeans-sigExpPositivityInSamples)))
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
 		#weighting of background
@@ -118,7 +118,7 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  #vrange_summary_site$useweight = vrange_summary_site$maxWeight * vrange_summary_site$minWeight
 	  #vrange_summary_site$useweight =   rowMeans(vrange_summary_site[,rownames(sigexpinfo)],na.rm=T)
 	  #vrange_summary_site$useweight[is.nan(vrange_summary_site$useweight)] = 1
-	  #method 4: mean rank of exposures * weight
+	  #method 5: mean rank of exposures * weight
 	  vrange_summary_site$useweight = do.call(pmin,c(vrange_summary_site[,rownames(sigexpinfo)],list(na.rm=T)))
 	  
 	  vrange_summary_site = data.frame(vrange_summary_site,stringsAsFactors=F,row.names=vrange_summary_site$start)
