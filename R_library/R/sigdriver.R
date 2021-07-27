@@ -80,10 +80,10 @@ sigDriver <- function(signature_test,
 	print("Generating null model...")
 	if (length(unique(sampleinfofiltered$entity)) == 1){
     #nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C",n.Resampling=200,type.Resampling="bootstrap")
-    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$sigRank ~ sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C")#,n.Resampling=200,type.Resampling="bootstrap")
+    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$total_variants  + sampleinfofiltered$gender, out_type="C")#,n.Resampling=200,type.Resampling="bootstrap")
   }else{
     #nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$entity + sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C",n.Resampling=200,type.Resampling="bootstrap")
-    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$sigRank ~ sampleinfofiltered$entity +  sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C")#,n.Resampling=200,type.Resampling="bootstrap")
+    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$entity +  sampleinfofiltered$total_variants +  sampleinfofiltered$gender, out_type="C")#,n.Resampling=200,type.Resampling="bootstrap")
   }
   
 	#init parallelization
