@@ -40,7 +40,11 @@ signatureRepresentationAdjustment <- function(gns,
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
 		#weighting of background
-		binSignatureWeights[which(rownames(binSignatureWeights) %in% c(signature_test,backgroundsigslist)),] = 1
+		binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
+		#weighting of tested-signature
+		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > 0.9){
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1
+		}
 		#weighting of signature
 		#upweight underrepresented signatures
 		if (sigExpPositivityInSamples[signature_test] < 0.1){
