@@ -1,3 +1,16 @@
+somaticVariantsProbabalisticSubsampling <- function(somaticvarranges){
+	set.seed(1)
+	#probablistic subsampling of variants associated to signatures
+	for (i in 1:length(somaticvarranges)){
+		print(paste(i,length(somaticvarranges[[i]])))
+		somaticvarranges[[i]]$rand=runif(length(somaticvarranges[[i]]))
+		somaticvarranges[[i]] = somaticvarranges[[i]][which(somaticvarranges[[i]]$rand < somaticvarranges[[i]]$WEIGHT)]
+		print(paste(i,length(somaticvarranges[[i]])))
+	}
+	return(somaticvarranges)
+}
+
+
 signatureRepresentationAdjustment <- function(gns,
                              signature_test,
                              sigexpinfo,
@@ -21,7 +34,8 @@ signatureRepresentationAdjustment <- function(gns,
 		#method 1, weight only by prevalence
 		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#method 2, expectation diff
-		binSignatureWeights =  data.frame(1/(1000^(binStatsMeans-sigExpPositivityInSamples)))
+		binSignatureWeights =  data.frame(1/(100^(binStatsMeans-sigExpPositivityInSamples)))
+		#binSignatureWeights[binSignatureWeights > 3] = 3
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
 		#weighting of background

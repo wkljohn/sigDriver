@@ -57,7 +57,7 @@ doassocandwriteSKAThotspot <- function (igene,
 	                                              variantsassociated[listvarinregion,], #somaticvarranges[[idxchr]],
 	                                              samplemetatablewithentity$ID,
 	                                              samplemetatablewithentity,
-	                                              pctin,restricted,useSigWeight=TRUE)
+	                                              pctin,restricted,useSigWeight=FALSE)
 	      #toc()
 	      #NOT ANY MORE on 10kb windows:50 only should contain 1 window
 	      #if (varianttype == 50) { topregions = topregions[1,]}
