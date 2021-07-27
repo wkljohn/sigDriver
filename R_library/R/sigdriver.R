@@ -70,6 +70,7 @@ sigDriver <- function(signature_test,
 	
 	#generate other signature null distribution in bin
 	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads)
+	somaticvarranges=somaticVariantsProbabalisticSubsampling(somaticvarranges)
 
 	outfile = paste(out_path,"/",signature_test,"_intermediate_results.tsv",sep="")
 	write(paste("Gene","regions","markers","marker_snvs","n.samples","Q","p.value","entity","entityvar",sep=" "),file=outfile)	
