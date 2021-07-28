@@ -35,14 +35,20 @@ signatureRepresentationAdjustment <- function(gns,
 		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#method 2, expectation diff
 		#binSignatureWeights =  data.frame(1/(100^(binStatsMeans-sigExpPositivityInSamples)))
+		print("sig pos")
+		print(sigExpPositivityInSamples)
+		print("bin pos")
+		print(binStatsMeans)
 		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
+		print("bin weight")
+		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
 		#weighting of background
 		binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
-		#weighting of tested-signature
-		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > 0.9){
+		#weighting of tested-signature, by conditioned on weighting 
+		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > 0.5 || binStatsMeans[signature_test,] < 0.1){
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1
 		}
 		#weighting of signature
