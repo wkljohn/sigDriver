@@ -99,7 +99,7 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  group_by(start) %>%
 	  summarise_at(vars(rownames(sigexpinfo)), mean)
 	  vrange_summary_site_sig_pos = vrange_summary_site
-	  vrange_summary_site_sig_pos[,backgroundsigsidx+1] = 0
+	  #vrange_summary_site_sig_pos[,backgroundsigsidx+1] = 0	#not in rank
 	  vrange_summary_site$max_exp = do.call(pmax,  vrange_summary_site[,rownames(sigexpinfo)])
 	  
 	  #for rank, max to binary
