@@ -37,6 +37,7 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
     SDsmaxthres = 4
   }
   print("INIT")
+  minvariantinframeUnweighted = round(minvariantinframe/2)
   nvarmedian=median(samplemetatablewithentity$total_variants)
   #add nvar column to variant ranges
   
@@ -89,7 +90,7 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
   print(medianweight)
   print(sdmut * SDsmaxthres)
   #print(mutationfreqlistframe)
-  mutationfreqlistframe = mutationfreqlistframe[which(mutationfreqlistframe$COUNT >= minvariantinframe),]
+  mutationfreqlistframe = mutationfreqlistframe[which(mutationfreqlistframe$COUNT >= minvariantinframeUnweighted),]
   
   #print(mutationfreqlistframe[mutationfreqlistframe$WEIGHTED > 5,])
   print(head(mutationfreqlistframe[order(mutationfreqlistframe$WEIGHTED,decreasing = T),],n=10))

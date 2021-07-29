@@ -5,6 +5,7 @@ somaticVariantsProbabalisticSubsampling <- function(somaticvarranges){
 		print(paste(i,length(somaticvarranges[[i]])))
 		somaticvarranges[[i]]$rand=runif(length(somaticvarranges[[i]]))
 		somaticvarranges[[i]] = somaticvarranges[[i]][which(somaticvarranges[[i]]$rand < somaticvarranges[[i]]$WEIGHT)]
+		somaticvarranges[[i]][which(somaticvarranges[[i]]$WEIGHT < 1)]$WEIGHT = 1
 		print(paste(i,length(somaticvarranges[[i]])))
 	}
 	return(somaticvarranges)
@@ -39,7 +40,7 @@ signatureRepresentationAdjustment <- function(gns,
 		print(sigExpPositivityInSamples)
 		print("bin pos")
 		print(binStatsMeans)
-		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
+		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.6)	#0.001 is the error
 		print("bin weight")
 		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
@@ -51,10 +52,12 @@ signatureRepresentationAdjustment <- function(gns,
 		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > 0.5 || binStatsMeans[signature_test,] < 0.1){
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1
 		}
+		#overweight disabled
+		binSignatureWeights[binSignatureWeights > 1,]   = 1
 		#weighting of signature
 		#upweight underrepresented signatures
-		if (sigExpPositivityInSamples[signature_test] < 0.1){
-			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1.5
+		if (sigExpPositivityInSamples[signature_test] < 0.05){
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.7
 		}
 		
 		#test binning weighting results
