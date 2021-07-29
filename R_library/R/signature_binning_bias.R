@@ -40,7 +40,7 @@ signatureRepresentationAdjustment <- function(gns,
 		print(sigExpPositivityInSamples)
 		print("bin pos")
 		print(binStatsMeans)
-		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.6)	#0.001 is the error
+		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
 		print("bin weight")
 		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
