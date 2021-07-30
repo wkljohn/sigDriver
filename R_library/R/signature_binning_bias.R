@@ -54,21 +54,17 @@ signatureRepresentationAdjustment <- function(gns,
 		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > 0.5 || binStatsMeans[signature_test,] < 0.1){
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1
 		}
-		#upweight underrepresented signatures
-		if (sigExpPositivityInSamples[signature_test] < 0.05){
-			#downweight all others
-			downweight = (0.8 + (sigExpPositivityInSamples[signature_test])/0.05 * 0.2)
-			binSignatureWeights = binSignatureWeights * downweight
-			samplemetatablewithentityRank[,signature_test] = round(samplemetatablewithentityRank[,signature_test] * (1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.2 ))
-			samplemetatablewithentityRank[,signature_test] = samplemetatablewithentityRank[,signature_test] - min(samplemetatablewithentityRank[,signature_test]) + 1
-		}
+
 		#overweight disabled
 		binSignatureWeights[binSignatureWeights > 1,]   = 1
 		#weighting of signature
 		#upweight underrepresented signatures
-		#if (sigExpPositivityInSamples[signature_test] < 0.05){
-			#binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.7
-		#}
+		if (sigExpPositivityInSamples[signature_test] < 0.05){
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.7
+			#uprank
+			samplemetatablewithentityRank[,signature_test] = round(samplemetatablewithentityRank[,signature_test] * (1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.2 ))
+			samplemetatablewithentityRank[,signature_test] = samplemetatablewithentityRank[,signature_test] - min(samplemetatablewithentityRank[,signature_test]) + 1
+		}
 		
 		#test binning weighting results
 		#compute weight on each variant
