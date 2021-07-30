@@ -5,7 +5,9 @@ somaticVariantsProbabalisticSubsampling <- function(somaticvarranges){
 		print(paste(i,length(somaticvarranges[[i]])))
 		somaticvarranges[[i]]$rand=runif(length(somaticvarranges[[i]]))
 		somaticvarranges[[i]] = somaticvarranges[[i]][which(somaticvarranges[[i]]$rand < somaticvarranges[[i]]$WEIGHT)]
-		somaticvarranges[[i]][which(somaticvarranges[[i]]$WEIGHT < 1)]$WEIGHT = 1
+		if (length(which(somaticvarranges[[i]]$WEIGHT < 1)) > 0){
+			somaticvarranges[[i]][which(somaticvarranges[[i]]$WEIGHT < 1)]$WEIGHT = 1
+		}
 		print(paste(i,length(somaticvarranges[[i]])))
 	}
 	return(somaticvarranges)
