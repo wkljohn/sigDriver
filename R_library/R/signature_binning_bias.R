@@ -23,7 +23,7 @@ signatureRepresentationAdjustment <- function(gns,
                              threads){
    print("Calculating signature-bin distribution")
 		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
-		binStatsList=parSapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
+		binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
 		binStatsDF = do.call(rbind,binStatsList)
 		
