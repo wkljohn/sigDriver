@@ -51,7 +51,8 @@ signatureRepresentationAdjustment <- function(gns,
 		#weighting of background
 		binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
 		#weighting of tested-signature, by conditioned on weighting 
-		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > 0.5 || binStatsMeans[signature_test,] < 0.1){
+		underRepresentationThreshold = 0.5
+		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > underRepresentationThreshold || binStatsMeans[signature_test,] < 0.1){
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1
 		}
 
@@ -59,10 +60,18 @@ signatureRepresentationAdjustment <- function(gns,
 		binSignatureWeights[binSignatureWeights > 1,]   = 1
 		#weighting of signature
 		#upweight underrepresented signatures
-		if (sigExpPositivityInSamples[signature_test] < 0.05){
-			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.7
+		ThresUnderPositivity = 0.09
+		rankscaler=20
+		if (sigExpPositivityInSamples[signature_test] < ThresUnderPositivity){
+			ThBasline = ThresUnderPositivity + 0.001
+			#adjustment for under-and-over represented signatures
+			baselineUnderRepWeight = 10^(log10(1.5) + 
+				log10(binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),]) + 
+				log10(( ThBasline - sigExpPositivityInSamples[signature_test]) / ThresUnderPositivity * 1.7))
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = baselineUnderRepWeight #+  ( ThresUnderPositivity - sigExpPositivityInSamples[signature_test]) / ThresUnderPositivity * 1.7
 			#uprank
-			samplemetatablewithentityRank[,signature_test] = round(samplemetatablewithentityRank[,signature_test] * (1.5 +  ( 0.05 - sigExpPositivityInSamples[signature_test]) / 0.05 * 1.2 ))
+			samplemetatablewithentityRank[,signature_test] = round(samplemetatablewithentityRank[,signature_test] *  ( 1+10^(log10(1.5) + log10(ThBasline - sigExpPositivityInSamples[signature_test]))*rankscaler))
+			#* (1.5 +  ( ThresUnderPositivity - sigExpPositivityInSamples[signature_test]) / ThresUnderPositivity * 1.2 ))
 			samplemetatablewithentityRank[,signature_test] = samplemetatablewithentityRank[,signature_test] - min(samplemetatablewithentityRank[,signature_test]) + 1
 		}
 		
