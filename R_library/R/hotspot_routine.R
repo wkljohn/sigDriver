@@ -37,7 +37,7 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
     SDsmaxthres = 4
   }
   print("INIT")
-  minvariantinframeUnweighted = round(minvariantinframe/2)
+  minvariantinframeUnweighted = round(minvariantinframe/4)
   nvarmedian=median(samplemetatablewithentity$total_variants)
   #add nvar column to variant ranges
   
