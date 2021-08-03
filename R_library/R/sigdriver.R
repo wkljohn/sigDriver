@@ -29,9 +29,9 @@ sigDriver <- function(signature_test,
 #		min_testing_bin_vars = 7
 #		frame_pruned_min_nvar = 7
 #	}
-	minentityposcasespct = 0.01
-	min_testing_bin_vars = 7
-	frame_pruned_min_nvar = 7
+	#minentityposcasespct = 0.01
+	#min_testing_bin_vars = 7
+	#frame_pruned_min_nvar = 7
 	
 	#run preparation
 	somaticvarranges = read_variants_ranges(variant_file)
