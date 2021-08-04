@@ -1,5 +1,5 @@
-somaticVariantsProbabalisticSubsampling <- function(somaticvarranges){
-	set.seed(1)
+somaticVariantsProbabalisticSubsampling <- function(somaticvarranges,rand_seed=1){
+	set.seed(rand_seed)
 	#probablistic subsampling of variants associated to signatures
 	for (i in 1:length(somaticvarranges)){
 		print(paste(i,length(somaticvarranges[[i]])))
@@ -23,17 +23,27 @@ signatureRepresentationAdjustment <- function(gns,
                              threads){
    print("Calculating signature-bin distribution")
 		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
-		binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
+		#positivity type
+		#binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
+		#average type
+		binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureAverage, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
 		stopCluster(cl)
 		binStatsDF = do.call(rbind,binStatsList)
 		
-		#Compute signature exposures in samples
-		sigExpPositivityInSamples = colSums(samplemetatablewithentity[,rownames(sigexpinfo)] > 0.05) / dim(samplemetatablewithentity)[1]
+		#Compute non-zero averages
+		sampleSignatureSigExpAvg = samplemetatablewithentity[,rownames(sigexpinfo)]
+		sampleSignatureSigExpAvg[sampleSignatureSigExpAvg == 0] = NA
+		sigExpPositivityInSamples = colMeans(sampleSignatureSigExpAvg,na.rm=T)
+		
+#		#Compute signature exposures in samples
+#		sigExpPositivityInSamples = colSums(samplemetatablewithentity[,rownames(sigexpinfo)] > 0.05) / dim(samplemetatablewithentity)[1]
+
+		#rank samples by exposures
 		samplemetatablewithentityRank = samplemetatablewithentity[,!colnames(samplemetatablewithentity) %in% rownames(sigexpinfo)]
 		samplemetatablewithentityRank = merge_allsignature_byrank_samples(sampleinfo = samplemetatablewithentityRank, sigexpinfo = sigexpinfo)
 		
 		#Computer exposures in bins and create weight
-		binStatsMeans = data.frame(colMeans(binStatsDF),stringsAsFactors=F)
+		binStatsMeans = data.frame(colMeans(binStatsDF,na.rm=T),stringsAsFactors=F)
 		#method 1, weight only by prevalence
 		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#method 2, expectation diff
@@ -42,7 +52,9 @@ signatureRepresentationAdjustment <- function(gns,
 		print(sigExpPositivityInSamples)
 		print("bin pos")
 		print(binStatsMeans)
-		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
+		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
+		#for average
+		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 4)	#0.001 
 		print("bin weight")
 		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
@@ -233,3 +245,74 @@ getBinSignatureRepresentation <- function (igene,
     #return(cond)
   })
 }
+
+
+getBinSignatureAverage <- function (igene,
+                             gns,
+                             somaticvarranges,
+                             samplemetatablewithentity,
+                             sigweight=FALSE,sigNames){
+                             
+	  require(GenomicRanges)
+	  require(dplyr)
+	  require(reshape2)
+	  require(matrixStats)
+	  require(sigDriver)
+	  out <- tryCatch({
+		  splitByOverlaptolist <-
+		    function(query, subject, column="ENTREZID", ...)
+		    {
+		      olaps <- findOverlaps(query, subject, ...)
+		      return(subjectHits(olaps))
+		    }
+	    
+			#annotation variables
+		  restricted = TRUE
+			lookuparray = data.frame(cbind(c("chr1","chr2","chr3","chr4","chr5","chr6","chr7","chr8","chr9","chr10","chr11","chr12","chr13","chr14","chr15","chr16","chr17","chr18","chr19","chr20","chr21","chr22","chrX","chrY"),
+		                                 c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24)),stringsAsFactors = FALSE)
+		  rownames(lookuparray) = lookuparray$X1
+		  lookuparray$X2 = as.numeric(lookuparray$X2)
+		  genetest = gns$SYMBOL[igene]
+	    testgns1gene = gns[which(gns$SYMBOL == genetest)]
+	    
+	    idxchr = lookuparray[as.character(seqnames(testgns1gene)[1]),]$X2
+	    variantsassociated = somaticvarranges[[idxchr]][somaticvarranges[[idxchr]]$case_ID %in% samplemetatablewithentity$ID, ]
+	    listvarinregion = unique(splitByOverlaptolist(testgns1gene, variantsassociated, "SYMBOL"))
+	    topregions <- sigDriver:::getregionTopMutatedRanges(testgns1gene,
+	                                            variantsassociated[listvarinregion,], #somaticvarranges[[idxchr]],
+	                                            samplemetatablewithentity$ID,
+	                                            samplemetatablewithentity,
+	                                            pctin,restricted,useSigWeight=sigweight)
+			if (dim(topregions)[1] != 0){
+	      print(paste("extract variants for top:", dim(topregions)[1]))
+		    #get what samples are in the bin       
+		    topsomaticvrangesdf = cbind(as.character(seqnames(testgns1gene)),topregions$START,topregions$END)
+		    topsomaticvrangesdf = data.frame(topsomaticvrangesdf,stringsAsFactors=FALSE)
+		    colnames(topsomaticvrangesdf)  = c("CHROM","POS","END")                           
+				topsomaticvranges = makeGRangesFromDataFrame(topsomaticvrangesdf,seqnames.field="CHROM",start.field="POS",end.field="END",keep.extra.columns=TRUE)
+		    listvarinregion = unique(splitByOverlaptolist(topsomaticvranges, variantsassociated, "SYMBOL"))
+		    varframe = data.frame( variantsassociated[listvarinregion,])
+		    #print(varframe$case_ID)
+		    #print(head(samplemetatablewithentity[varframe$case_ID,sigNames]))
+		    #calculate prevalence of signatures in a bin
+		   	#print(head(samplemetatablewithentity))
+		    #print(head(varframe))
+		    #sample_sig_table_pos5 = colSums(samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05) / length(varframe$case_ID)
+				    
+				sampleSignatureSigExpAvg = samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]
+				sampleSignatureSigExpAvg[sampleSignatureSigExpAvg == 0] = NA
+				sigExpPositivityInSamples = colMeans(sampleSignatureSigExpAvg,na.rm=T)
+				
+		    #print(sample_sig_table_pos5)#samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05)
+		    return(sigExpPositivityInSamples)
+	    }else{
+	    	return(NULL)
+	    }
+	  },
+  error=function(cond) {
+    print(paste("Error:",cond))
+    return(NULL)
+    #return(cond)
+  })
+}
+
