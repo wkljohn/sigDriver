@@ -42,6 +42,11 @@ signatureRepresentationAdjustment <- function(gns,
 		samplemetatablewithentityRank = samplemetatablewithentity[,!colnames(samplemetatablewithentity) %in% rownames(sigexpinfo)]
 		samplemetatablewithentityRank = merge_allsignature_byrank_samples(sampleinfo = samplemetatablewithentityRank, sigexpinfo = sigexpinfo)
 		
+		#entity stats
+		if (length(unique(samplemetatablewithentity$entity)) > 0){
+			
+		}
+		
 		#Computer exposures in bins and create weight
 		binStatsMeans = data.frame(colMeans(binStatsDF,na.rm=T),stringsAsFactors=F)
 		#method 1, weight only by prevalence
@@ -54,7 +59,7 @@ signatureRepresentationAdjustment <- function(gns,
 		print(binStatsMeans)
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
 		#for average
-		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 4)	#0.001 
+		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 3)	#0.001 
 		print("bin weight")
 		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
