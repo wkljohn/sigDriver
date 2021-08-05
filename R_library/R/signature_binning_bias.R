@@ -22,7 +22,7 @@ signatureRepresentationAdjustment <- function(gns,
                              samplemetatablewithentity,
                              threads,
                              variantFactor=2.5,
-                             entityFactor=5,
+                             entityFactor=1,
                              binStatsList=NULL){
    print("Calculating signature-bin distribution")
    print(paste(variantFactor,entityFactor))
