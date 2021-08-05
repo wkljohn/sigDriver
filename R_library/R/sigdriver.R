@@ -53,7 +53,7 @@ sigDriver <- function(signature_test,
   	sampleinfofiltered$normalized_exposures = sampleinfofiltered$normalized_exposures - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
   	sigMean = mean(sampleinfofiltered$normalized_exposures)
   	sigSD = sd(sampleinfofiltered$normalized_exposures)
-  	sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 5 * sigSD)] = max(sampleinfofiltered$normalized_exposures)
+  	sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 5 * sigSD)] = max(sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures < sigMean + 5 * sigSD)])
   }
   
 	#termination criterias
