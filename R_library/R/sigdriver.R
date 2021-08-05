@@ -15,7 +15,8 @@ sigDriver <- function(signature_test,
 											testregions,
 											backgroundsigs,
 											out_path,
-											threads){
+											threads,
+											sigProfilerInput=TRUE){
 	#Libraries
 	require(GenomicRanges)
 	require(dplyr)
@@ -47,6 +48,13 @@ sigDriver <- function(signature_test,
 	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="max")
   sampleinfofiltered$sigRank = sampleinfofiltered$sigRank - min(sampleinfofiltered$sigRank)
   sampleinfofiltered$sigRank = sampleinfofiltered$sigRank / max(sampleinfofiltered$sigRank)
+  if (sigProfilerInput){
+  	#converge the lower bound
+  	sampleinfofiltered$normalized_exposures = sampleinfofiltered$normalized_exposures - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
+  	sigMean = mean(sampleinfofiltered$normalized_exposures)
+  	sigSD = sd(sampleinfofiltered$normalized_exposures)
+  	sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 5 * sigSD)] = max(sampleinfofiltered$normalized_exposures)
+  }
   
 	#termination criterias
 	if (dim(sampleinfofiltered)[1] == 0){
@@ -80,10 +88,10 @@ sigDriver <- function(signature_test,
 	print("Generating null model...")
 	if (length(unique(sampleinfofiltered$entity)) == 1){
     #nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C",n.Resampling=200,type.Resampling="bootstrap")
-    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$sigRank ~ log2(sampleinfofiltered$total_variants + 1)  + sampleinfofiltered$gender, out_type="C")#,n.Resampling=2000,type.Resampling="bootstrap")
+    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ log2(sampleinfofiltered$total_variants + 1)  + sampleinfofiltered$gender, out_type="C")#,n.Resampling=2000,type.Resampling="bootstrap")
   }else{
     #nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$entity + sampleinfofiltered$total_variants + log2(sampleinfofiltered$total_variants + 1) + sampleinfofiltered$gender, out_type="C",n.Resampling=200,type.Resampling="bootstrap")
-    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$sigRank ~ sampleinfofiltered$entity +   log2(sampleinfofiltered$total_variants + 1) +  sampleinfofiltered$gender, out_type="C")#,n.Resampling=2000,type.Resampling="bootstrap")
+    nullSKATmodel<-SKAT_Null_Model( sampleinfofiltered$normalized_exposures ~ sampleinfofiltered$entity +   log2(sampleinfofiltered$total_variants + 1) +  sampleinfofiltered$gender, out_type="C")#,n.Resampling=2000,type.Resampling="bootstrap")
   }
   
 	#init parallelization

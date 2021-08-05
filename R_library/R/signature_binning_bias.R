@@ -21,7 +21,7 @@ signatureRepresentationAdjustment <- function(gns,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
-                             variantFactor=2.5,
+                             variantFactor=3,
                              entityFactor=1,
                              binStatsList=NULL){
    print("Calculating signature-bin distribution")
@@ -51,17 +51,17 @@ signatureRepresentationAdjustment <- function(gns,
 		samplemetatablewithentityRank = merge_allsignature_byrank_samples(sampleinfo = samplemetatablewithentityRank, sigexpinfo = sigexpinfo)
 		
 		#entity correction
-		if (length(unique(samplemetatablewithentity$entity)) > 0){
-			sampleEntityOccurence = table(samplemetatablewithentity$entity) / length(samplemetatablewithentity$entity)
-			sampleEntityOccurenceDiff = cbind(sampleEntityOccurence,round(binEntityOccr[names(sampleEntityOccurence)],10))
-			sampleEntityOccurenceCorr = data.frame(((sampleEntityOccurenceDiff[,1]+0.001)/(sampleEntityOccurenceDiff[,2]+0.001)) ^ entityFactor)	
-			sampleEntityOccurenceCorr[is.na(sampleEntityOccurenceCorr)] = 1
-			print("Entity corr")
-			print(sampleEntityOccurenceCorr)
-			somaticvarranges = variantsAddEntity(somaticvarranges,samplemetatablewithentity,sampleEntityOccurenceCorr)
-		}else{
-			sampleEntityOccurenceCorr = 1
-		}
+#		if (length(unique(samplemetatablewithentity$entity)) > 0){
+#			sampleEntityOccurence = table(samplemetatablewithentity$entity) / length(samplemetatablewithentity$entity)
+#			sampleEntityOccurenceDiff = cbind(sampleEntityOccurence,round(binEntityOccr[names(sampleEntityOccurence)],10))
+#			sampleEntityOccurenceCorr = data.frame(((sampleEntityOccurenceDiff[,1]+0.001)/(sampleEntityOccurenceDiff[,2]+0.001)) ^ entityFactor)	
+#			sampleEntityOccurenceCorr[is.na(sampleEntityOccurenceCorr)] = 1
+#			print("Entity corr")
+#			print(sampleEntityOccurenceCorr)
+#			somaticvarranges = variantsAddEntity(somaticvarranges,samplemetatablewithentity,sampleEntityOccurenceCorr)
+#		}else{
+#			sampleEntityOccurenceCorr = 1
+#		}
 		
 		#Computer exposures in bins and create weight
 		binStatsMeans = data.frame(colMeans(binStatsDF,na.rm=T),stringsAsFactors=F)
