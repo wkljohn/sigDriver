@@ -21,8 +21,8 @@ signatureRepresentationAdjustment <- function(gns,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
-                             variantFactor=1.1,
-                             entityFactor=1.5,
+                             variantFactor=2.5,
+                             entityFactor=5,
                              binStatsList=NULL){
    print("Calculating signature-bin distribution")
    print(paste(variantFactor,entityFactor))
@@ -90,7 +90,7 @@ signatureRepresentationAdjustment <- function(gns,
 		binSignatureWeights[binSignatureWeights > 1,]   = 1
 		#weighting of signature
 		#upweight underrepresented signatures
-		ThresUnderPositivity = 0.09
+		ThresUnderPositivity = 0.5 ^ variantFactor
 		rankscaler=20
 		underRepresentationThreshold = 0.5
 		if (sigExpPositivityInSamples[signature_test] < ThresUnderPositivity){
