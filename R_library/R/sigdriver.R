@@ -44,7 +44,7 @@ sigDriver <- function(signature_test,
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
 	
 	#test ranking
-	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="max")
+	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="average")
   sampleinfofiltered$sigRank = sampleinfofiltered$sigRank - min(sampleinfofiltered$sigRank)
   sampleinfofiltered$sigRank = sampleinfofiltered$sigRank / max(sampleinfofiltered$sigRank)
   
