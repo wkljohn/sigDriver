@@ -20,31 +20,47 @@ signatureRepresentationAdjustment <- function(gns,
                              backgroundsigs,
                              somaticvarranges,
                              samplemetatablewithentity,
-                             threads){
+                             threads,
+                             variantFactor=1.1,
+                             entityFactor=1.5,
+                             binStatsList=NULL){
    print("Calculating signature-bin distribution")
-		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
-		#positivity type
-		#binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureRepresentation, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
-		#average type
-		binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureAverage, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
-		stopCluster(cl)
-		binStatsDF = do.call(rbind,binStatsList)
+   print(paste(variantFactor,entityFactor))
+		if (is.null(binStatsList)){
+			cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
+			binStatsList=parLapply(cl, 1:length(gns$SYMBOL), getBinSignatureAverage, gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
+			#getBinSignatureAverage(1,gns=gns,somaticvarranges=somaticvarranges,samplemetatablewithentity=samplemetatablewithentity,sigweight=FALSE,sigNames=rownames(sigexpinfo))
+			stopCluster(cl)
+		}
+		#binStatsDF = do.call(rbind,binStatsList)
+		binStatsDF = do.call(rbind,lapply(binStatsList,function(x){if (!is.null(x)){return(x[[1]])}}))
+		binStatsDFAVG = do.call(rbind,lapply(binStatsList,function(x){if (!is.null(x)){return(x[[2]])}}))
+		binStatsENTITY = do.call(rbind,lapply(binStatsList,function(x){if (!is.null(x) ){return(x[[3]])}}))
+		binEntityOccr = table(binStatsENTITY) / length(binStatsENTITY)
 		
 		#Compute non-zero averages
-		sampleSignatureSigExpAvg = samplemetatablewithentity[,rownames(sigexpinfo)]
-		sampleSignatureSigExpAvg[sampleSignatureSigExpAvg == 0] = NA
-		sigExpPositivityInSamples = colMeans(sampleSignatureSigExpAvg,na.rm=T)
+		#sampleSignatureSigExpAvg = samplemetatablewithentity[,rownames(sigexpinfo)]
+		#sampleSignatureSigExpAvg[sampleSignatureSigExpAvg == 0] = NA
+		#sigExpPositivityInSamples = colMeans(sampleSignatureSigExpAvg,na.rm=T)
 		
 #		#Compute signature exposures in samples
-#		sigExpPositivityInSamples = colSums(samplemetatablewithentity[,rownames(sigexpinfo)] > 0.05) / dim(samplemetatablewithentity)[1]
+		sigExpPositivityInSamples = colSums(samplemetatablewithentity[,rownames(sigexpinfo)] > 0.05) / dim(samplemetatablewithentity)[1]
 
 		#rank samples by exposures
 		samplemetatablewithentityRank = samplemetatablewithentity[,!colnames(samplemetatablewithentity) %in% rownames(sigexpinfo)]
 		samplemetatablewithentityRank = merge_allsignature_byrank_samples(sampleinfo = samplemetatablewithentityRank, sigexpinfo = sigexpinfo)
 		
-		#entity stats
+		#entity correction
 		if (length(unique(samplemetatablewithentity$entity)) > 0){
-			
+			sampleEntityOccurence = table(samplemetatablewithentity$entity) / length(samplemetatablewithentity$entity)
+			sampleEntityOccurenceDiff = cbind(sampleEntityOccurence,round(binEntityOccr[names(sampleEntityOccurence)],10))
+			sampleEntityOccurenceCorr = data.frame(((sampleEntityOccurenceDiff[,1]+0.001)/(sampleEntityOccurenceDiff[,2]+0.001)) ^ entityFactor)	
+			sampleEntityOccurenceCorr[is.na(sampleEntityOccurenceCorr)] = 1
+			print("Entity corr")
+			print(sampleEntityOccurenceCorr)
+			somaticvarranges = variantsAddEntity(somaticvarranges,samplemetatablewithentity,sampleEntityOccurenceCorr)
+		}else{
+			sampleEntityOccurenceCorr = 1
 		}
 		
 		#Computer exposures in bins and create weight
@@ -53,13 +69,14 @@ signatureRepresentationAdjustment <- function(gns,
 		#binSignatureWeights = data.frame((1-binStatsMeans)^2)
 		#method 2, expectation diff
 		#binSignatureWeights =  data.frame(1/(100^(binStatsMeans-sigExpPositivityInSamples)))
-		print("sig pos")
-		print(sigExpPositivityInSamples)
-		print("bin pos")
-		print(binStatsMeans)
+		#print("sig pos")
+		#print(sigExpPositivityInSamples)
+		#print("bin pos")
+		#print(binStatsMeans)
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
+		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ variantFactor)	
 		#for average
-		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 3)	#0.001 
+		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 3)	#0.001 
 		print("bin weight")
 		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
@@ -67,11 +84,7 @@ signatureRepresentationAdjustment <- function(gns,
 		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
 		#weighting of background
 		binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
-		#weighting of tested-signature, by conditioned on weighting 
-		underRepresentationThreshold = 0.5
-		if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > underRepresentationThreshold || binStatsMeans[signature_test,] < 0.1){
-			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = 1
-		}
+
 
 		#overweight disabled
 		binSignatureWeights[binSignatureWeights > 1,]   = 1
@@ -79,6 +92,7 @@ signatureRepresentationAdjustment <- function(gns,
 		#upweight underrepresented signatures
 		ThresUnderPositivity = 0.09
 		rankscaler=20
+		underRepresentationThreshold = 0.5
 		if (sigExpPositivityInSamples[signature_test] < ThresUnderPositivity){
 			ThBasline = ThresUnderPositivity + 0.001
 			#adjustment for under-and-over represented signatures
@@ -90,6 +104,9 @@ signatureRepresentationAdjustment <- function(gns,
 			samplemetatablewithentityRank[,signature_test] = round(samplemetatablewithentityRank[,signature_test] *  ( 1+10^(log10(1.5) + log10(ThBasline - sigExpPositivityInSamples[signature_test]))*rankscaler))
 			#* (1.5 +  ( ThresUnderPositivity - sigExpPositivityInSamples[signature_test]) / ThresUnderPositivity * 1.2 ))
 			samplemetatablewithentityRank[,signature_test] = samplemetatablewithentityRank[,signature_test] - min(samplemetatablewithentityRank[,signature_test]) + 1
+		}else if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > underRepresentationThreshold || binStatsMeans[signature_test,] < 0.1){
+			#weighting of tested-signature, by conditioned on weighting 
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = -1
 		}
 		
 		#test binning weighting results
@@ -116,6 +133,13 @@ signatureRepresentationAdjustment <- function(gns,
 		return (somaticvarranges)
 }
 
+variantsAddEntity <- function(somaticvarranges,samplemetatablewithentity,EntityWeight){
+	for (i in 1:length(somaticvarranges)){
+		rownames(samplemetatablewithentity) = samplemetatablewithentity$ID
+		somaticvarranges[[i]]$entityWeight = EntityWeight[samplemetatablewithentity[somaticvarranges[[i]]$case_ID,]$entity,1]
+	}
+	return(somaticvarranges)
+}
 
 signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 																			backgroundsigsidx,
@@ -181,6 +205,16 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  #method 5: mean rank of exposures * weight
 	  vrange_summary_site$useweight = do.call(pmin,c(vrange_summary_site[,rownames(sigexpinfo)],list(na.rm=T)))
 	  
+	  
+	  #entity weight
+	  if ("entityWeight" %in% colnames(somaticvarrangesDF)){
+	  	vrange_summary_site_entity = somaticvarrangesDF %>%
+				  group_by(start) %>%
+				  summarise_at("entityWeight", mean)
+			vrange_summary_site$useweight = vrange_summary_site$useweight * vrange_summary_site_entity$entityWeight
+	  }
+	  
+	  vrange_summary_site$useweight[vrange_summary_site$useweight < 0] = 1
 	  vrange_summary_site = data.frame(vrange_summary_site,stringsAsFactors=F,row.names=vrange_summary_site$start)
 	 
 	  somaticvarranges[[i]]$WEIGHT = vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$useweight
@@ -302,14 +336,17 @@ getBinSignatureAverage <- function (igene,
 		    #calculate prevalence of signatures in a bin
 		   	#print(head(samplemetatablewithentity))
 		    #print(head(varframe))
-		    #sample_sig_table_pos5 = colSums(samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05) / length(varframe$case_ID)
-				    
+		    
+		    sample_sig_table_pos5 = colSums(samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05) / length(varframe$case_ID)
+				
+				sampleEntityOccurence = samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),]$entity
+				
 				sampleSignatureSigExpAvg = samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]
 				sampleSignatureSigExpAvg[sampleSignatureSigExpAvg == 0] = NA
 				sigExpPositivityInSamples = colMeans(sampleSignatureSigExpAvg,na.rm=T)
 				
 		    #print(sample_sig_table_pos5)#samplemetatablewithentity[which(samplemetatablewithentity$ID %in% varframe$case_ID),sigNames]>0.05)
-		    return(sigExpPositivityInSamples)
+		    return(list(sample_sig_table_pos5,sigExpPositivityInSamples,sampleEntityOccurence))
 	    }else{
 	    	return(NULL)
 	    }
