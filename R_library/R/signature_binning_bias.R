@@ -93,7 +93,7 @@ signatureRepresentationAdjustment <- function(gns,
 		ThresUnderPositivity = 0.5 ^ variantFactor
 		rankscaler=20
 		underRepresentationThreshold = 0.5
-		if (sigExpPositivityInSamples[signature_test] < ThresUnderPositivity){
+		if (FALSE){ #sigExpPositivityInSamples[signature_test] < ThresUnderPositivity){
 			ThBasline = ThresUnderPositivity + 0.001
 			#adjustment for under-and-over represented signatures
 			baselineUnderRepWeight = 10^(log10(1.5) + 
