@@ -50,7 +50,7 @@ sigDriver <- function(signature_test,
   sampleinfofiltered$sigRank = sampleinfofiltered$sigRank / max(sampleinfofiltered$sigRank)
   if (sigProfilerInput){
   	#converge the lower bound
-  	sampleinfofiltered$normalized_exposures = sampleinfofiltered$normalized_exposures - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
+  	sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] = sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
   	sigMean = mean(sampleinfofiltered$normalized_exposures)
   	sigSD = sd(sampleinfofiltered$normalized_exposures)
   	sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 5 * sigSD)] = max(sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures < sigMean + 5 * sigSD)])
