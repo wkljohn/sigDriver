@@ -353,6 +353,60 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 
 }
 
+
+correctExposures <- function(values){
+	# values=sampleinfofiltered$SBS10a
+	valuesRank = rank(values,ties.method="min")
+	values = sort(values[values > 0],decreasing=T)
+	dist = list()
+	for (i in 1:length(values)-1){
+		dist[[length(dist)+1]] = c(x=i,y=abs(values[i] - values[i+1]))
+	}
+	distdf = data.frame(do.call(rbind,dist),stringsAsFactors=F)
+	
+	
+	#########Correction#############
+	#quartile definition
+	LQloweridx = 1
+	LQupperidx = floor(length(values) / 8)
+	UQloweridx = ceiling(length(values)  - length(values) / 8)
+	UQupperidx = length(values) 
+	SDDistMax = 2
+	
+	#distance based correction
+	meanDist = median(abs(distdf$y))
+	SDDist = sd(abs(distdf$y[LQupperidx:UQloweridx]))
+	#correct lower 12.5 % of data
+	LQmeanDist = mean(abs(distdf$y[LQloweridx:LQupperidx]))
+	LQCorrFactor = LQmeanDist / meanDist
+	LQCorrector = distdf$y[LQloweridx:LQupperidx]
+	LQMedian = median(LQCorrector)
+	LQCorrector[LQCorrector > meanDist + SDDist * SDDistMax ] = LQMedian
+	distdf$y[LQloweridx:LQupperidx] = LQCorrector
+	#correct Upper 12.5 % of data
+	UQmeanDist = mean(abs(distdf$y[UQloweridx:UQupperidx]))
+	UQCorrFactor = UQmeanDist / meanDist
+	UQCorrector = distdf$y[UQloweridx:UQupperidx]
+	UQMedian = median(UQCorrector)
+	UQCorrector[UQCorrector > meanDist + SDDist * SDDistMax ] = UQMedian
+	distdf$y[UQloweridx:UQupperidx] = UQCorrector
+	
+	#########rebuild numbers############
+	valuescorrlist = list()
+	nowvalue = meanDist
+	for (i in 1:dim(distdf)[1]){
+		nowvalue = nowvalue + distdf$y[i]
+		valuescorrlist[[length(valuescorrlist)+1]] = nowvalue
+	}
+	valuescorr = do.call(c,valuescorrlist)
+	#fill zeros back
+	valuescorr = c(valuescorr, rep(0,length(valuesRank) - length(valuescorr)))
+	valuescorr = sort(valuescorr)
+	valuescorr = valuescorr[valuesRank]
+	return(valuescorr)
+}
+
+
 plot_qq <- function(resultsSKATdf,outpath){
 	require(qqman)
 	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
