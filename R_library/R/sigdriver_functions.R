@@ -357,7 +357,7 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 correctExposures <- function(values){
 	# values=sampleinfofiltered$SBS10a
 	valuesRank = rank(values,ties.method="min")
-	values = sort(values[values > 0],decreasing=T)
+	values = sort(values[values > 0],decreasing=F)
 	dist = list()
 	for (i in 1:length(values)-1){
 		dist[[length(dist)+1]] = c(x=i,y=abs(values[i] - values[i+1]))
