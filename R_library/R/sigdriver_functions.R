@@ -356,6 +356,14 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 
 correctExposures <- function(values){
 	# values=sampleinfofiltered$SBS10a
+	require(DDoutlier)
+	nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
+	knn_scores <- sort(DDoutlier::KNN_AGG(nonneg_exp))
+	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > 1))
+#lof_scores <- DDoutlier::LOF(nonneg_exp)
+#cof_scores <- DDoutlier::COF(nonneg_exp)
+
+
 	valuesRank = rank(values,ties.method="min")
 	values = sort(values[values > 0],decreasing=F)
 	dist = list()
@@ -369,12 +377,14 @@ correctExposures <- function(values){
 	#quartile definition
 	LQloweridx = 1
 	LQupperidx = floor(length(values) / 8)
-	UQloweridx = ceiling(length(values)  - length(values) / 8)
+	#UQloweridx = ceiling(length(values)  - length(values) / 8)
+	UQloweridx = length(values) - UQOutliersCnt
 	UQupperidx = length(values) 
 	SDDistMax = 2
 	
 	#distance based correction
 	meanDist = median(abs(distdf$y))
+	DistUQ = quantile(abs(distdf$y),0.75)
 	SDDist = sd(abs(distdf$y[LQupperidx:UQloweridx]))
 	#correct lower 12.5 % of data
 	LQmeanDist = mean(abs(distdf$y[LQloweridx:LQupperidx]))
@@ -384,12 +394,12 @@ correctExposures <- function(values){
 	LQCorrector[LQCorrector > meanDist + SDDist * SDDistMax ] = LQMedian
 	distdf$y[LQloweridx:LQupperidx] = LQCorrector
 	#correct Upper 12.5 % of data
-	UQmeanDist = mean(abs(distdf$y[UQloweridx:UQupperidx]))
-	UQCorrFactor = UQmeanDist / meanDist
-	UQCorrector = distdf$y[UQloweridx:UQupperidx]
-	UQMedian = median(UQCorrector)
-	UQCorrector[UQCorrector > meanDist + SDDist * SDDistMax ] = UQMedian
-	distdf$y[UQloweridx:UQupperidx] = UQCorrector
+	#UQmeanDist = mean(abs(distdf$y[UQloweridx:UQupperidx]))
+	#UQCorrFactor = UQmeanDist / meanDist
+	#UQCorrector = distdf$y[UQloweridx:UQupperidx]
+	#UQMedian = median(UQCorrector)
+	#UQCorrector[UQCorrector > meanDist + SDDist * SDDistMax ] = UQMedian
+	distdf$y[UQloweridx:UQupperidx] = DistUQ #UQCorrector
 	
 	#########rebuild numbers############
 	valuescorrlist = list()
@@ -403,6 +413,7 @@ correctExposures <- function(values){
 	valuescorr = c(valuescorr, rep(0,length(valuesRank) - length(valuescorr)))
 	valuescorr = sort(valuescorr)
 	valuescorr = valuescorr[valuesRank]
+	
 	return(valuescorr)
 }
 
