@@ -387,12 +387,12 @@ correctExposures <- function(values){
 	DistUQ = quantile(abs(distdf$y),0.75)
 	SDDist = sd(abs(distdf$y[LQupperidx:UQloweridx]))
 	#correct lower 12.5 % of data
-	LQmeanDist = mean(abs(distdf$y[LQloweridx:LQupperidx]))
-	LQCorrFactor = LQmeanDist / meanDist
-	LQCorrector = distdf$y[LQloweridx:LQupperidx]
-	LQMedian = median(LQCorrector)
-	LQCorrector[LQCorrector > meanDist + SDDist * SDDistMax ] = LQMedian
-	distdf$y[LQloweridx:LQupperidx] = LQCorrector
+	#LQmeanDist = mean(abs(distdf$y[LQloweridx:LQupperidx]))
+	#LQCorrFactor = LQmeanDist / meanDist
+	#LQCorrector = distdf$y[LQloweridx:LQupperidx]
+	#LQMedian = median(LQCorrector)
+	#LQCorrector[LQCorrector > meanDist + SDDist * SDDistMax ] = LQMedian
+	#distdf$y[LQloweridx:LQupperidx] = LQCorrector
 	#correct Upper 12.5 % of data
 	#UQmeanDist = mean(abs(distdf$y[UQloweridx:UQupperidx]))
 	#UQCorrFactor = UQmeanDist / meanDist
