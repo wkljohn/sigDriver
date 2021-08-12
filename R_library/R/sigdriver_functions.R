@@ -365,15 +365,19 @@ correctExposuresByEntity <- function(sampleinfofiltered){
 
 correctExposures <- function(values){
 	#min 5 non-zero values to do correction
-	if (length(which(values > 0)) < 5){
+	if (length(values > 0) < 6){
 		print("too few positives")
 		return(values)
 	}
 
 	# values=sampleinfofiltered$SBS10a
 	require(DDoutlier)
+	kMax = 10
+	if (length(values > 0) <= 10){
+		kMax = length(values > 0) - 1
+	}
 	nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
-	knn_scores <- sort(DDoutlier::KNN_AGG(nonneg_exp))
+	knn_scores <- sort(DDoutlier::KNN_AGG(nonneg_exp,k_max=kMax))
 	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > 1))
 #lof_scores <- DDoutlier::LOF(nonneg_exp)
 #cof_scores <- DDoutlier::COF(nonneg_exp)
