@@ -38,7 +38,7 @@ sigDriver <- function(signature_test,
 	somaticvarranges = read_variants_ranges(variant_file)
 	sigexpinfo = read_signature_exposures_matrix(signature_file)
 	sampleinfo = read_metadata_matrix(covar_file,covariates)
-	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation,sigProfilerInput=sigProfilerInput)
+	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation)
 	sampleinfo = merge_allsignature_samples(sampleinfo = sampleinfo,sigexpinfo = sigexpinfo)
 	sampleinfo = filter_sample_info_matrix_by_vrange(sampleinfo=sampleinfo,somaticvarranges=somaticvarranges)
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
@@ -55,6 +55,7 @@ sigDriver <- function(signature_test,
   	#sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 4 * sigSD)] = max(sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures < sigMean + 4 * sigSD)])
   	#sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] = sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
   	#sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures)
+  	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered)
   }
   
 	#termination criterias

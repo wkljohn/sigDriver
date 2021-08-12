@@ -47,7 +47,7 @@ merge_allsignature_byrank_samples <- function(sampleinfo,sigexpinfo){
 	return(sampleinfo)
 }
 
-merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation,sigProfilerInput=TRUE){
+merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation){
 	signorminfo = melt(colSums(sigexpinfo))
 	signorminfo$ID = rownames(signorminfo)
 	colnames(signorminfo)[1] = "total_variants"
@@ -66,16 +66,6 @@ merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresho
 	colnames(sigtestexpinfo) = c("ID","signature_variants")
 	sigtestexpinfo = merge(sigtestexpinfo,signorminfo,by="ID")
 	
-	#normalization for sigDriverInput
-	if (sigProfilerInput){
-		if (length(which(sigtestexpinfo$signature_variants > 0)) > length(sigtestexpinfo$signature_variants) * 0.5){
-			minVarSig = min( sigtestexpinfo$signature_variants[sigtestexpinfo$signature_variants>0])
-			print(paste("fix min var2",minVarSig))
-			nonNegExpIdx = which(sigtestexpinfo$signature_variants > 0)
-			sigtestexpinfo$signature_variants[nonNegExpIdx] = sigtestexpinfo$signature_variants[nonNegExpIdx] - minVarSig + 1
-			sigtestexpinfo$total_variants[nonNegExpIdx] = sigtestexpinfo$total_variants[nonNegExpIdx] - minVarSig + 1
-		}
-	}
 	sigtestexpinfo$normalized_exposures = sigtestexpinfo$signature_variants / sigtestexpinfo$total_variants
 	
 	sampleinfomerge = merge(sampleinfo,sigtestexpinfo)
@@ -365,7 +355,20 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 }
 
 
+correctExposuresByEntity <- function(sampleinfofiltered){
+	listEntities = unique(sampleinfofiltered$entity)
+	for (i in 1:length(listEntities)){
+		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$SBS10a = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$SBS10a)
+	}
+}
+
 correctExposures <- function(values){
+	#min 5 non-zero values to do correction
+	if (length(which(values > 0)) < 5){
+		print("too few positives")
+		return(values)
+	}
+
 	# values=sampleinfofiltered$SBS10a
 	require(DDoutlier)
 	nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
@@ -389,7 +392,7 @@ correctExposures <- function(values){
 	LQloweridx = 1
 	LQupperidx = floor(length(values) / 8)
 	#UQloweridx = ceiling(length(values)  - length(values) / 8)
-	UQloweridx = length(values) - UQOutliersCnt
+	UQloweridx = length(values) - UQOutliersCnt + 1
 	UQupperidx = length(values) 
 	SDDistMax = 2
 	
@@ -398,23 +401,25 @@ correctExposures <- function(values){
 	DistUQ = quantile(abs(distdf$y),0.75)
 	SDDist = sd(abs(distdf$y[LQupperidx:UQloweridx]))
 	#correct lower 12.5 % of data
-	#LQmeanDist = mean(abs(distdf$y[LQloweridx:LQupperidx]))
-	#LQCorrFactor = LQmeanDist / meanDist
-	#LQCorrector = distdf$y[LQloweridx:LQupperidx]
-	#LQMedian = median(LQCorrector)
-	#LQCorrector[LQCorrector > meanDist + SDDist * SDDistMax ] = LQMedian
-	#distdf$y[LQloweridx:LQupperidx] = LQCorrector
+#	LQmeanDist = mean(abs(distdf$y[LQloweridx:LQupperidx]))
+#	LQCorrFactor = LQmeanDist / meanDist
+#	LQCorrector = distdf$y[LQloweridx:LQupperidx]
+#	LQMedian = median(LQCorrector)
+#	LQCorrector[LQCorrector > meanDist + SDDist * SDDistMax ] = LQMedian
+#	distdf$y[LQloweridx:LQupperidx] = LQCorrector
 	#correct Upper 12.5 % of data
 	#UQmeanDist = mean(abs(distdf$y[UQloweridx:UQupperidx]))
 	#UQCorrFactor = UQmeanDist / meanDist
 	#UQCorrector = distdf$y[UQloweridx:UQupperidx]
 	#UQMedian = median(UQCorrector)
 	#UQCorrector[UQCorrector > meanDist + SDDist * SDDistMax ] = UQMedian
-	distdf$y[UQloweridx:UQupperidx] = DistUQ #UQCorrector
+	if (UQloweridx <= UQupperidx){
+		distdf$y[UQloweridx:UQupperidx] = DistUQ #UQCorrector
+	} 
 	
 	#########rebuild numbers############
 	valuescorrlist = list()
-	nowvalue = meanDist
+	nowvalue = min(values)#meanDist
 	for (i in 1:dim(distdf)[1]){
 		nowvalue = nowvalue + distdf$y[i]
 		valuescorrlist[[length(valuescorrlist)+1]] = nowvalue
@@ -427,22 +432,3 @@ correctExposures <- function(values){
 	
 	return(valuescorr)
 }
-
-
-plot_qq <- function(resultsSKATdf,outpath){
-	require(qqman)
-	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
-	png(outpath)
-	qq(resultsSKATp)
-	dev.off()
-}
-
-calculate_lambda <- function(resultsSKATdf){
-	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
-	resultsSKATp = resultsSKATp[resultsSKATp < 1]
-	z = qnorm(resultsSKATp / 2)
-	lambda = round(median(z^2) / 0.454, 3)
-	return(lambda)
-}
-
-
