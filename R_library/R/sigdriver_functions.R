@@ -68,7 +68,7 @@ merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresho
 	
 	#normalization for sigDriverInput
 	if (sigProfilerInput){
-		if (length(which(sigtestexpinfo$signature_variants > 0)) > 0.5){
+		if (length(which(sigtestexpinfo$signature_variants > 0)) > length(sigtestexpinfo$signature_variants) * 0.5){
 			minVarSig = min( sigtestexpinfo$signature_variants[sigtestexpinfo$signature_variants>0])
 			print(paste("fix min var2",minVarSig))
 			nonNegExpIdx = which(sigtestexpinfo$signature_variants > 0)
