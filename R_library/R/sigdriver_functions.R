@@ -378,11 +378,12 @@ correctExposuresByEntity <- function(sampleinfofiltered){
 	for (i in 1:length(listEntities)){
 		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures)
 	}
+	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=10)
 	return (sampleinfofiltered)
 }
 
 
-correctExposures <- function(values){
+correctExposures <- function(values,threshold = 1){
 	#min 5 non-zero values to do correction
 	nonZeroValues = length(which(values > 0))
 	if (nonZeroValues < 6){
@@ -398,7 +399,7 @@ correctExposures <- function(values){
 	}
 	nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
 	knn_scores <- sort(DDoutlier::KNN_AGG(nonneg_exp,k_max=kMax))
-	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > 1))
+	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > threshold))
 #lof_scores <- DDoutlier::LOF(nonneg_exp)
 #cof_scores <- DDoutlier::COF(nonneg_exp)
 
