@@ -366,7 +366,8 @@ correctExposuresByEntity <- function(sampleinfofiltered){
 
 correctExposures <- function(values){
 	#min 5 non-zero values to do correction
-	if (length(values > 0) < 6){
+	nonZeroValues = length(which(values > 0))
+	if (nonZeroValues < 6){
 		print("too few positives")
 		return(values)
 	}
@@ -374,8 +375,8 @@ correctExposures <- function(values){
 	# values=sampleinfofiltered$SBS10a
 	require(DDoutlier)
 	kMax = 10
-	if (length(values > 0) <= 10){
-		kMax = length(values > 0) - 1
+	if (nonZeroValues <= 10){
+		kMax = nonZeroValues - 1
 	}
 	nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
 	knn_scores <- sort(DDoutlier::KNN_AGG(nonneg_exp,k_max=kMax))
