@@ -47,7 +47,7 @@ merge_allsignature_byrank_samples <- function(sampleinfo,sigexpinfo){
 	return(sampleinfo)
 }
 
-merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation){
+merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresholdhypmutation,sigProfilerInput=TRUE){
 	signorminfo = melt(colSums(sigexpinfo))
 	signorminfo$ID = rownames(signorminfo)
 	colnames(signorminfo)[1] = "total_variants"
@@ -65,6 +65,17 @@ merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresho
 	}
 	colnames(sigtestexpinfo) = c("ID","signature_variants")
 	sigtestexpinfo = merge(sigtestexpinfo,signorminfo,by="ID")
+	
+	#normalization for sigDriverInput
+	if (sigProfilerInput){
+		if (length(which(sigtestexpinfo$signature_variants > 0)) > 0.5){
+			minVarSig = min( sigtestexpinfo$signature_variants[sigtestexpinfo$signature_variants>0])
+			print(paste("fix min var",minVarSig))
+			nonNegExpIdx = which(sigtestexpinfo$signature_variants > 0)
+			sigtestexpinfo$signature_variants[nonNegExpIdx] = sigtestexpinfo$signature_variants[nonNegExpIdx] - minVarSig + 1
+			sigtestexpinfo$total_variants[nonNegExpIdx] = sigtestexpinfo$total_variants[nonNegExpIdx] - minVarSig + 1
+		}
+	}
 	sigtestexpinfo$normalized_exposures = sigtestexpinfo$signature_variants / sigtestexpinfo$total_variants
 	
 	sampleinfomerge = merge(sampleinfo,sigtestexpinfo)
