@@ -44,11 +44,7 @@ sigDriver <- function(signature_test,
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
 	
-	#test ranking
-	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="max")
-  sampleinfofiltered$sigRank = sampleinfofiltered$sigRank - min(sampleinfofiltered$sigRank)
-  sampleinfofiltered$sigRank = sampleinfofiltered$sigRank / max(sampleinfofiltered$sigRank)
-  if (sigProfilerInput){
+	if (sigProfilerInput){
   	#converge the lower bound
   	#sigMean = mean(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0])
   	#sigSD = sd(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0])
@@ -57,6 +53,11 @@ sigDriver <- function(signature_test,
   	#sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures)
   	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered)
   }
+	#test ranking
+	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="max")
+  sampleinfofiltered$sigRank = sampleinfofiltered$sigRank - min(sampleinfofiltered$sigRank)
+  sampleinfofiltered$sigRank = sampleinfofiltered$sigRank / max(sampleinfofiltered$sigRank)
+
   
 	#termination criterias
 	if (dim(sampleinfofiltered)[1] == 0){

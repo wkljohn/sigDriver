@@ -358,9 +358,10 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 correctExposuresByEntity <- function(sampleinfofiltered){
 	listEntities = unique(sampleinfofiltered$entity)
 	for (i in 1:length(listEntities)){
-		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$SBS10a = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$SBS10a)
+		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures)
 	}
 }
+
 
 correctExposures <- function(values){
 	#min 5 non-zero values to do correction
