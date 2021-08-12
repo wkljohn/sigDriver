@@ -355,6 +355,24 @@ run_sigdriver_association <- function(signature_test,somaticvarranges,sigexpinfo
 }
 
 
+plot_qq <- function(resultsSKATdf,outpath){
+	require(qqman)
+	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
+	png(outpath)
+	qq(resultsSKATp)
+	dev.off()
+}
+
+calculate_lambda <- function(resultsSKATdf){
+	resultsSKATp = as.numeric(resultsSKATdf[resultsSKATdf$p_value != "NA",]$p_value)
+	resultsSKATp = resultsSKATp[resultsSKATp < 1]
+	z = qnorm(resultsSKATp / 2)
+	lambda = round(median(z^2) / 0.454, 3)
+	return(lambda)
+}
+
+
+
 correctExposuresByEntity <- function(sampleinfofiltered){
 	listEntities = unique(sampleinfofiltered$entity)
 	for (i in 1:length(listEntities)){
