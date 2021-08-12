@@ -360,6 +360,7 @@ correctExposuresByEntity <- function(sampleinfofiltered){
 	for (i in 1:length(listEntities)){
 		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures)
 	}
+	return (sampleinfofiltered)
 }
 
 
