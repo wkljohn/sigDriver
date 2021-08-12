@@ -70,7 +70,7 @@ merge_signature_samples <- function(sampleinfo,sigexpinfo,signature_test,thresho
 	if (sigProfilerInput){
 		if (length(which(sigtestexpinfo$signature_variants > 0)) > 0.5){
 			minVarSig = min( sigtestexpinfo$signature_variants[sigtestexpinfo$signature_variants>0])
-			print(paste("fix min var",minVarSig))
+			print(paste("fix min var2",minVarSig))
 			nonNegExpIdx = which(sigtestexpinfo$signature_variants > 0)
 			sigtestexpinfo$signature_variants[nonNegExpIdx] = sigtestexpinfo$signature_variants[nonNegExpIdx] - minVarSig + 1
 			sigtestexpinfo$total_variants[nonNegExpIdx] = sigtestexpinfo$total_variants[nonNegExpIdx] - minVarSig + 1
