@@ -373,17 +373,18 @@ calculate_lambda <- function(resultsSKATdf){
 
 
 
+
 correctExposuresByEntity <- function(sampleinfofiltered){
 	listEntities = unique(sampleinfofiltered$entity)
 	for (i in 1:length(listEntities)){
 		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures)
 	}
-	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=10)
+	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=50)
 	return (sampleinfofiltered)
 }
 
 
-correctExposures <- function(values,threshold = 1){
+correctExposures <- function(values,threshold = 30){
 	#min 5 non-zero values to do correction
 	nonZeroValues = length(which(values > 0))
 	if (nonZeroValues < 6){
@@ -397,12 +398,16 @@ correctExposures <- function(values,threshold = 1){
 	if (nonZeroValues <= 10){
 		kMax = nonZeroValues - 1
 	}
-	nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
-	knn_scores <- sort(DDoutlier::KNN_AGG(nonneg_exp,k_max=kMax))
+	#nonneg_exp=data.frame(values,stringAsFactors=F)#[sampleinfofiltered$SBS10a>0],stringAsFactors=F)
+	nonneg_exp=data.frame(values,stringAsFactors=F)
+	knn_scores <- sort(DDoutlier::KNN_SUM(nonneg_exp))#',k_max=kMax))
+	knn_scores = knn_scores[knn_scores>0]
+	#threshold = median(knn_scores) + sd(knn_scores[1:round(length(knn_scores)*0.75)]) * threshold
+	threshold <-  median(knn_scores[knn_scores>0]) * threshold
 	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > threshold))
-#lof_scores <- DDoutlier::LOF(nonneg_exp)
+#lof_scores <- DDoutlier::LDF(nonneg_exp)
 #cof_scores <- DDoutlier::COF(nonneg_exp)
-
+	print(paste("N outliers",threshold,UQOutliersCnt))
 
 	valuesRank = rank(values,ties.method="min")
 	values = sort(values[values > 0],decreasing=F)
