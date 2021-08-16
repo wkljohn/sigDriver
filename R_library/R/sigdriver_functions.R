@@ -379,12 +379,12 @@ correctExposuresByEntity <- function(sampleinfofiltered){
 	for (i in 1:length(listEntities)){
 		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures)
 	}
-	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=50)
+	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=70)
 	return (sampleinfofiltered)
 }
 
 
-correctExposures <- function(values,threshold = 30){
+correctExposures <- function(values,threshold = 50){
 	#min 5 non-zero values to do correction
 	nonZeroValues = length(which(values > 0))
 	if (nonZeroValues < 6){
