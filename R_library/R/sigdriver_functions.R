@@ -403,7 +403,8 @@ correctExposures <- function(values,threshold = 30){
 	knn_scores <- sort(DDoutlier::KNN_SUM(nonneg_exp))#',k_max=kMax))
 	knn_scores = knn_scores[knn_scores>0]
 	#threshold = median(knn_scores) + sd(knn_scores[1:round(length(knn_scores)*0.75)]) * threshold
-	threshold <-  median(knn_scores[knn_scores>0]) * threshold
+	LBknnscore <- min(knn_scores[knn_scores>0])
+	threshold <-  ((median(knn_scores[knn_scores>0])-LBknnscore) * threshold) + LBknnscore
 	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > threshold))
 #lof_scores <- DDoutlier::LDF(nonneg_exp)
 #cof_scores <- DDoutlier::COF(nonneg_exp)
