@@ -21,7 +21,7 @@ signatureRepresentationAdjustment <- function(gns,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
-                             variantFactor=1.0,
+                             variantFactor=2.0,
                              entityFactor=1,
                              binStatsList=NULL){
    print("Calculating signature-bin distribution")
