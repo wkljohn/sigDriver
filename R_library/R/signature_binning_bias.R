@@ -21,7 +21,7 @@ signatureRepresentationAdjustment <- function(gns,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
-                             variantFactor=2.0,
+                             variantFactor=1.5,
                              entityFactor=1,
                              binStatsList=NULL){
    print("Calculating signature-bin distribution")
@@ -74,7 +74,7 @@ signatureRepresentationAdjustment <- function(gns,
 		#print("bin pos")
 		#print(binStatsMeans)
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
-		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ variantFactor)	
+		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.0001)/(binStatsMeans+0.0001)) ^ variantFactor)	
 		#for average
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 3)	#0.001 
 		print("bin weight")
