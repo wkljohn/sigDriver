@@ -217,7 +217,8 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  
 	  vrange_summary_site$useweight[vrange_summary_site$useweight < 0] = 1
 	  vrange_summary_site = data.frame(vrange_summary_site,stringsAsFactors=F,row.names=vrange_summary_site$start)
-	 
+	 	
+	 	print(head(vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$useweight))
 	  somaticvarranges[[i]]$WEIGHT = vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$useweight
 	  return(somaticvarranges[[i]])
 }
