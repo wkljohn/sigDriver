@@ -84,9 +84,9 @@ Options:
 	  make_option(c("-r", "--regions"), type = "character", dest = "testregions",default=NA),
 	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
 	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA),
-	  make_option(c("-fp", "--fp2"), type = "character", dest = "fp",default=NA),
-	  make_option(c("-fm", "--fm2"), type = "character", dest = "fm",default=NA),
-	  make_option(c("-mc", "--mc2"), type = "character", dest = "mc",default=NA)
+	  make_option(c("--fp"), type = "character", dest = "fp",default=NA),
+	  make_option(c("--fm"), type = "character", dest = "fm",default=NA),
+	  make_option(c("--mc"), type = "character", dest = "mc",default=NA)
 	)
 	
 	args <- commandArgs(trailingOnly = TRUE)
