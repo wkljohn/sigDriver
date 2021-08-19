@@ -127,7 +127,8 @@ signatureRepresentationAdjustment <- function(gns,
 		rownames(sigSampleInfoMatrix) =  samplemetatablewithentity$ID
 		
 		cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/bin_bias_info_parallel.log')
-		somaticvarranges=parSapply(cl, 1:length(somaticvarranges), signatureRepresentationWeight, somaticvarranges=somaticvarranges,sigweight=sigweight,backgroundsigsidx=backgroundsigsidx,sigSampleInfoMatrix=sigSampleInfoMatrix,sigexpinfo=sigexpinfo)
+		#somaticvarranges=parSapply(cl, 1:length(somaticvarranges), signatureRepresentationWeight, somaticvarranges=somaticvarranges,sigweight=sigweight,backgroundsigsidx=backgroundsigsidx,sigSampleInfoMatrix=sigSampleInfoMatrix,sigexpinfo=sigexpinfo)
+		somaticvarranges=lapply(1:length(somaticvarranges), signatureRepresentationWeight, somaticvarranges=somaticvarranges,sigweight=sigweight,backgroundsigsidx=backgroundsigsidx,sigSampleInfoMatrix=sigSampleInfoMatrix,sigexpinfo=sigexpinfo)
 		stopCluster(cl)
 		
 		return (somaticvarranges)
