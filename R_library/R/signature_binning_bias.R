@@ -153,6 +153,7 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 		#somaticvarranges[[i]]$WEIGHT = 1
 		pos_unique_sites = unique(start(somaticvarranges[[i]]))
 		
+	 	print("S1")
 		#add exposures
 		somaticvarrangesDF = merge(somaticvarrangesDF, sigSampleInfoMatrix, by.x="case_ID", by.y="row.names")
 		vrange_summary_site = somaticvarrangesDF %>%
@@ -162,6 +163,7 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  #vrange_summary_site_sig_pos[,backgroundsigsidx+1] = 0	#not in rank
 	  vrange_summary_site$max_exp = do.call(pmax,  vrange_summary_site[,rownames(sigexpinfo)])
 	  
+	 	print("S2")
 	  #for rank, max to binary
 	  vrange_summary_site[,rownames(sigexpinfo)] = vrange_summary_site[,rownames(sigexpinfo)] - vrange_summary_site$max_exp + 1
 	  vrange_summary_site[vrange_summary_site < 0] = NA
@@ -207,6 +209,8 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 	  vrange_summary_site$useweight = do.call(pmin,c(vrange_summary_site[,rownames(sigexpinfo)],list(na.rm=T)))
 	  
 	  
+	 	print("S3")
+	 	
 	  #entity weight
 	  if ("entityWeight" %in% colnames(somaticvarrangesDF)){
 	  	vrange_summary_site_entity = somaticvarrangesDF %>%
@@ -215,10 +219,11 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 			vrange_summary_site$useweight = vrange_summary_site$useweight * vrange_summary_site_entity$entityWeight
 	  }
 	  
+	 	print("S4")
 	  vrange_summary_site$useweight[vrange_summary_site$useweight < 0] = 1
 	  vrange_summary_site = data.frame(vrange_summary_site,stringsAsFactors=F,row.names=vrange_summary_site$start)
 	 	
-	 	print(head(vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$useweight))
+	 	print("S5")
 	  somaticvarranges[[i]]$WEIGHT = vrange_summary_site[as.character(start(somaticvarranges[[i]])),]$useweight
 	  return(somaticvarranges[[i]])
 }
