@@ -83,9 +83,9 @@ Options:
 	  make_option(c("-t", "--threads"), type = "numeric", dest = "threads",default=1),
 	  make_option(c("-r", "--regions"), type = "character", dest = "testregions",default=NA),
 	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
-	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA)
-	  make_option(c("-fp", "--fp"), type = "character", dest = "fp",default=NA)
-	  make_option(c("-fm", "--fm"), type = "character", dest = "fm",default=NA)
+	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA),
+	  make_option(c("-fp", "--fp"), type = "character", dest = "fp",default=NA),
+	  make_option(c("-fm", "--fm"), type = "character", dest = "fm",default=NA),
 	  make_option(c("-mc", "--mc"), type = "character", dest = "mc",default=NA)
 	)
 	
