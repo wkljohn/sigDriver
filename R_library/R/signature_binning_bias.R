@@ -149,6 +149,9 @@ signatureRepresentationWeight <- function(i,somaticvarranges,sigweight,
 		require(dplyr)
 		print(paste("weighting chr",i))
 		somaticvarrangesDF = as.data.frame(somaticvarranges[[i]])
+		if (dim(somaticvarrangesDF) == 0){
+			return(somaticvarranges[[i]])
+		}
 		somaticvarrangesDF$WEIGHT = 1
 		#somaticvarranges[[i]]$WEIGHT = 1
 		pos_unique_sites = unique(start(somaticvarranges[[i]]))
