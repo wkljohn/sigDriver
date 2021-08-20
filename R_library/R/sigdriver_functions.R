@@ -374,12 +374,12 @@ calculate_lambda <- function(resultsSKATdf){
 
 
 
-correctExposuresByEntity <- function(sampleinfofiltered){
+correctExposuresByEntity <- function(sampleinfofiltered,threshold=100){
 	listEntities = unique(sampleinfofiltered$entity)
 	for (i in 1:length(listEntities)){
-		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures)
+		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures,threshold=threshold)
 	}
-	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=140)
+	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=threshold*1.4)
 	return (sampleinfofiltered)
 }
 

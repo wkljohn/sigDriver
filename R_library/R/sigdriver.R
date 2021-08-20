@@ -30,6 +30,7 @@ sigDriver <- function(signature_test,
 		#min_testing_bin_vars = 6
 		#frame_pruned_min_nvar = 6
 		corrVariantFactor = 1
+		corrOutliersThres = 50
 	}
 	#minentityposcasespct = 0.01
 	#min_testing_bin_vars = 7
@@ -52,7 +53,7 @@ sigDriver <- function(signature_test,
   	#sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 4 * sigSD)] = max(sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures < sigMean + 4 * sigSD)])
   	#sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] = sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
   	#sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures)
-  	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered)
+  	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered,threshold=corrOutliersThres)
   }
 	#test ranking
 	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="max")
