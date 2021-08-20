@@ -30,7 +30,7 @@ sigDriver <- function(signature_test,
 		#min_testing_bin_vars = 6
 		#frame_pruned_min_nvar = 6
 		corrVariantFactor = 1
-		corrOutliersThres = 50
+		corrOutliersThres = 200
 	}
 	#minentityposcasespct = 0.01
 	#min_testing_bin_vars = 7
