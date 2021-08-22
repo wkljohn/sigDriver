@@ -11,3 +11,4 @@ min_testing_bin_vars = 6
 framesize_pruned = 30
 frame_pruned_min_nvar = 6
 corrVariantFactor = 1.5
+corrOutliersThres = 100
