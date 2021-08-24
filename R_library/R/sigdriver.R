@@ -20,6 +20,7 @@ sigDriver <- function(signature_test,
 											out_path,
 											threads,
 											entitycuttoff,
+											outliersThreshold,
 											sigProfilerInput=TRUE,
 											randSeed=1){
 	#Libraries
@@ -29,9 +30,10 @@ sigDriver <- function(signature_test,
 	#require(sigDriver)
 	
 	minentityposcasespct = entitycuttoff 
+	corrOutliersThres = outliersThreshold
 	
 	#tweak cut-off for signatures with lower median sample mutation load
-	if (signature_test == "SBS84" || signature_test == "SBS9" || signature_test == "SBS3"){
+	if (signature_test == "SBS84" || signature_test == "SBS9"|| signature_test == "Signature_EX11"){
 		print("lower sample mutation load mode")
 		minentityposcasespct = 0.01
 		#min_testing_bin_vars = 6
