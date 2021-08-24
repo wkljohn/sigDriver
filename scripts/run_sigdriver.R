@@ -19,7 +19,7 @@ if (F){
 	
 	#################REVIEW2#####################
 	#PCAWG  cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.mSBS10.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.mSBS10.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_binbg1/ -t 16\"  run_sigdriver.R"}' | egrep "SBS1 | SBS10| SBS2 |SBS17a|SBS15|SBS16| SBS3 | SBS39 | SBS84 | SBS13"
-	#PCAWGE cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -E 0.04 -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBSALL_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_binbg1/ -t 16 -L 50 \" run_sigdriver.R"}' | grep -v EX7
+	#PCAWGE cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_E1_raw_exposure.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -E 0.04 -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBSALL_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_binbg1/ -t 16 -L 200 \" run_sigdriver.R"}' | grep -v EX7
 
 	#IMMUNEP	cut -f 1 /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.mSBS10.tsv | sed '1d' | awk '{print "qsub -l nodes=1:ppn=16 -l mem=40g -F \"-v /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Mutation_catalogue/annovar/somatic_annotated_V2/merged.avout.hg19_multianno.nofilt.noartsnv.simple.gz -e /b06x-isilon/b06x-c/chromothripsis/software/sigProfiler/python_binary/for_testing/output/ICGC_VCF_ORG_NOART_raw_exposure.mSBS10.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.noskin.tsv -s "$0" -r /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/SBS1_whitelist_regions -o /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/bin1k_cal_binbg1/ -t 16\"  run_sigdriver.R"}' | egrep "SBS84 | SBS9"
 	# | egrep " SBS9 | SBS84 | SBS6 | SBS13 | SBS39 | SBS84 | SBS37 "
@@ -92,7 +92,7 @@ Options:
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
 	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
 	  make_option(c("-E", "--entity"), type = "numeric", dest = "minentityposcasespct",default=0.05),
-	  make_option(c("-L", "--outliers"), type = "numeric", dest = "outliersthreshold",default=200),
+	  make_option(c("-L", "--outliers"), type = "numeric", dest = "outliersThreshold",default=200),
 	  make_option(c("--fp"), type = "character", dest = "fp",default=NA),
 	  make_option(c("--fm"), type = "character", dest = "fm",default=NA),
 	  make_option(c("--mc"), type = "character", dest = "mc",default=NA)
@@ -149,7 +149,7 @@ Options:
 	randSeed = argv$randSeed
 	sigProfilerInput = as.numeric(argv$correction)
 	minentityposcasespct = argv$minentityposcasespct
-	outliersthreshold = argv$outliersthreshold
+	outliersThreshold = argv$outliersThreshold
 
   #check file exists
   if (!file.exists(variant_file)){ stop("Variant file not found") }
@@ -168,7 +168,7 @@ Options:
 	#cat(paste("Background       : ",backgroundsigs,"\n",sep=""))
 	cat(paste("Entity cut-off   : ",minentityposcasespct,"\n",sep=""))
 	cat(paste("sigProfiler input: ",sigProfilerInput,"\n",sep=""))
-	cat(paste("Outliers cut-off : ",outliersthreshold,"\n",sep=""))
+	cat(paste("Outliers cut-off : ",outliersThreshold,"\n",sep=""))
 	cat(paste("Output path      : ",out_path,"\n",sep=""))
 	cat(paste("Threads          : ",threads,"\n",sep=""))
 	cat("=======================================\n")
@@ -203,6 +203,6 @@ sigDriver(signature_test=signature_test,
 					out_path,
 					threads,
 					entitycuttoff=minentityposcasespct,
-					outliersThreshold=outliersthreshold,
+					outliersThreshold=outliersThreshold,
           sigProfilerInput=sigProfilerInput,
 					randSeed=randSeed)
