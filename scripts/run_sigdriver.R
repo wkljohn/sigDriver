@@ -91,7 +91,7 @@ Options:
 	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA),
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
 	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
-	  make_option(c("-E", "--entity"), type = "character", dest = "minentityposcasespct",default=minentityposcasespct),
+	  make_option(c("-E", "--entity"), type = "character", dest = "minentityposcasespct",default=0.05),
 	  make_option(c("--fp"), type = "character", dest = "fp",default=NA),
 	  make_option(c("--fm"), type = "character", dest = "fm",default=NA),
 	  make_option(c("--mc"), type = "character", dest = "mc",default=NA)
@@ -198,5 +198,6 @@ sigDriver(signature_test=signature_test,
 					backgroundsigs,
 					out_path,
 					threads,
+					entitycuttoff=minentityposcasespct,
           sigProfilerInput=sigProfilerInput,
 					randSeed=randSeed)

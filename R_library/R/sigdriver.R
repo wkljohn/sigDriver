@@ -6,6 +6,7 @@
 #' @param covar_file Path to the metadata file
 #' @param out_path Path for output
 #' @param threads Number of threads for running
+#' @param entitycuttoff cut-off for entity positivity
 #' @param sigProfilerInput(default=TRUE) Apply adjustments for sigProfiler signature exposure outputs
 #' @param randSeed(default=1) Random seed
 #' @import data.table
@@ -18,6 +19,7 @@ sigDriver <- function(signature_test,
 											backgroundsigs,
 											out_path,
 											threads,
+											entitycuttoff,
 											sigProfilerInput=TRUE,
 											randSeed=1){
 	#Libraries
@@ -25,6 +27,8 @@ sigDriver <- function(signature_test,
 	require(dplyr)
 	require(data.table)
 	#require(sigDriver)
+	
+	minentityposcasespct = entitycuttoff 
 	
 	#tweak cut-off for signatures with lower median sample mutation load
 	if (signature_test == "SBS84" || signature_test == "SBS9" || signature_test == "SBS3"){
