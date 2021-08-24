@@ -91,7 +91,7 @@ Options:
 	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA),
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
 	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
-	  make_option(c("-E", "--entity"), type = "character", dest = "minentityposcasespct",default=0.05),
+	  make_option(c("-E", "--entity"), type = "numeric", dest = "minentityposcasespct",default=0.05),
 	  make_option(c("--fp"), type = "character", dest = "fp",default=NA),
 	  make_option(c("--fm"), type = "character", dest = "fm",default=NA),
 	  make_option(c("--mc"), type = "character", dest = "mc",default=NA)
@@ -164,6 +164,7 @@ Options:
 	cat(paste("medata file      : ",covar_file,"\n",sep=""))
 	cat(paste("test regions     : ",testregions,"\n",sep=""))
 	#cat(paste("Background       : ",backgroundsigs,"\n",sep=""))
+	cat(paste("Entity cut-off   : ",minentityposcasespct,"\n",sep=""))
 	cat(paste("sigProfiler input: ",sigProfilerInput,"\n",sep=""))
 	cat(paste("Output path      : ",out_path,"\n",sep=""))
 	cat(paste("Threads          : ",threads,"\n",sep=""))
