@@ -142,7 +142,7 @@ Options:
 	out_path = argv$out_path
 	threads = argv$threads
 	randSeed = argv$randSeed
-	sigProfilerInput = as.logical(argv$correction)
+	sigProfilerInput = argv$correction
 
   #check file exists
   if (!file.exists(variant_file)){ stop("Variant file not found") }
