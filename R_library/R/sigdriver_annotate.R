@@ -8,6 +8,8 @@
 #' @param results_file Path to the results file to load
 #' @param annotation_gtf Path to the gtf file for annotation
 #' @param threads Number of threads for running
+#' @param sigProfilerInput(default=TRUE) Apply adjustments for sigProfiler signature exposure outputs
+#' @param randSeed(default=1) Random seed
 #' @import data.table
 #' @export
 sigDriver_annotate <- function(signature_test,
@@ -17,7 +19,9 @@ sigDriver_annotate <- function(signature_test,
 											out_path,
 											results_file,
 											annotation_gtf,
-											threads){
+											threads,
+											sigProfilerInput=TRUE,
+											randSeed=1){
 
 	#libraries
 	library(GenomicRanges,quietly=T)
@@ -45,6 +49,9 @@ sigDriver_annotate <- function(signature_test,
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
 
+	if (sigProfilerInput){
+	 	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered,threshold=corrOutliersThres)
+  }
 	#keep only tumors to be tested in variants table
 	gns = read_genomic_bins(sigdriver_results)
 	#first filt variant range by sample list
@@ -54,6 +61,10 @@ sigDriver_annotate <- function(signature_test,
 	#in turn shrink the variant array by bins to test
 	somaticvarranges = prefilter_somatic_vranges(gns,somaticvarranges)
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
+
+	#correct bias presented by signature-binning algorithm interaction
+	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
+	somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)
 
 	#run main
 	outfile = paste(out_path,"/",signature_test,"_annotation_intermediate_results.tsv",sep="")

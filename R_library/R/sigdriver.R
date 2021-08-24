@@ -6,6 +6,8 @@
 #' @param covar_file Path to the metadata file
 #' @param out_path Path for output
 #' @param threads Number of threads for running
+#' @param sigProfilerInput(default=TRUE) Apply adjustments for sigProfiler signature exposure outputs
+#' @param randSeed(default=1) Random seed
 #' @import data.table
 #' @export
 sigDriver <- function(signature_test,
@@ -16,7 +18,8 @@ sigDriver <- function(signature_test,
 											backgroundsigs,
 											out_path,
 											threads,
-											sigProfilerInput=TRUE){
+											sigProfilerInput=TRUE,
+											randSeed=1){
 	#Libraries
 	require(GenomicRanges)
 	require(dplyr)
@@ -81,7 +84,7 @@ sigDriver <- function(signature_test,
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
 	#sigexpinfo = filter_exposures_matrix(sigexpinfo=sigexpinfo,sampleinfo=sampleinfo)
 	
-	#generate other signature null distribution in bin
+	#correct bias presented by signature-binning algorithm interaction
 	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
 	somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)
 

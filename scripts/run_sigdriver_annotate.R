@@ -69,6 +69,7 @@ Required:
     --out       | -o        Path for output
     
 Options:
+    --rand      | -a        Random seed (default:1)
     --threads   | -t        Number of threads (default:1)
     --help      | -h        Show this help message
 "
@@ -82,6 +83,8 @@ Options:
 	  make_option(c("-e", "--exposures"), type = "character", dest = "signature_file"),
 	  make_option(c("-m", "--metadata"), type = "character", dest = "covar_file"),
 	  make_option(c("-o", "--out"), type = "character", dest = "out_path"),
+	  make_option(c("-e", "--correct"), type = "character", dest = "correction",default=1),
+	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
 	  make_option(c("-t", "--threads"), type = "numeric", dest = "threads",default=1)
 	)
 	
@@ -138,6 +141,8 @@ Options:
 	annotation_gtf = argv$annotation_gtf
 	out_path = argv$out_path
 	threads = argv$threads
+	randSeed = argv$randSeed
+	sigProfilerInput = as.logical(argv$correction)
 
         #check file exists
         if (!file.exists(annotation_gtf)){ stop("GTF file not found") }
@@ -186,4 +191,5 @@ sigDriver_annotate(signature_test=signature_test,
                    out_path=out_path,
                    results_file=results_file,
                    annotation_gtf=annotation_gtf,
+                   sigProfilerInput=sigProfilerInput,
                    threads=threads)

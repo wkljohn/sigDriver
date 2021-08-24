@@ -69,7 +69,9 @@ Required:
     --out       | -o        Path for output
     
 Options:
+    --rand      | -a        Random seed (default:1)
     --threads   | -t        Number of threads (default:1)
+    --correct   | -e        Correction for sigProfiler output (default:1)
     --regions   | -r        Whitelist file for regions (<chr>:<start>-<end>)
     --help      | -h        Show this help message
 "           
@@ -84,6 +86,8 @@ Options:
 	  make_option(c("-r", "--regions"), type = "character", dest = "testregions",default=NA),
 	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
 	  make_option(c("-c", "--context"), type = "character", dest = "context_file",default=NA),
+	  make_option(c("-e", "--correct"), type = "character", dest = "correction",default=1),
+	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
 	  make_option(c("--fp"), type = "character", dest = "fp",default=NA),
 	  make_option(c("--fm"), type = "character", dest = "fm",default=NA),
 	  make_option(c("--mc"), type = "character", dest = "mc",default=NA)
@@ -137,6 +141,8 @@ Options:
 	backgroundsigs = argv$backgroundsigs
 	out_path = argv$out_path
 	threads = argv$threads
+	randSeed = argv$randSeed
+	sigProfilerInput = as.logical(argv$correction)
 
   #check file exists
   if (!file.exists(variant_file)){ stop("Variant file not found") }
@@ -185,4 +191,6 @@ sigDriver(signature_test=signature_test,
 					testregions,
 					backgroundsigs,
 					out_path,
-					threads)
+					threads,
+          sigProfilerInput=sigProfilerInput,
+					randSeed=randSeed)
