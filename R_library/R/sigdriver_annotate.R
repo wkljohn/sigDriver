@@ -19,6 +19,8 @@ sigDriver_annotate <- function(signature_test,
 											out_path,
 											results_file,
 											annotation_gtf,
+											backgroundsigs,
+											excludeSigs,
 											threads,
 											sigProfilerInput=TRUE,
 											randSeed=1){
@@ -63,7 +65,7 @@ sigDriver_annotate <- function(signature_test,
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
 
 	#correct bias presented by signature-binning algorithm interaction
-	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
+	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,excludeSigs=excludeSigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
 	somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)
 
 	#run main

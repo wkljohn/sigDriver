@@ -84,6 +84,8 @@ Options:
 	  make_option(c("-e", "--exposures"), type = "character", dest = "signature_file"),
 	  make_option(c("-m", "--metadata"), type = "character", dest = "covar_file"),
 	  make_option(c("-o", "--out"), type = "character", dest = "out_path"),
+	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
+	  make_option(c("-x", "--exclude"), type = "character", dest = "excludeSigs",default=""),
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
 	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
 	  make_option(c("-t", "--threads"), type = "numeric", dest = "threads",default=1)
@@ -144,6 +146,8 @@ Options:
 	threads = argv$threads
 	randSeed = argv$randSeed
 	sigProfilerInput = as.logical(argv$correction)
+	backgroundsigs = argv$backgroundsigs
+	excludeSigs = argv$excludeSigs
 
         #check file exists
         if (!file.exists(annotation_gtf)){ stop("GTF file not found") }
@@ -160,6 +164,8 @@ Options:
 	cat(paste("Variant file     : ",variant_file,"\n",sep=""))
 	cat(paste("Signature file   : ",signature_file,"\n",sep=""))
 	cat(paste("medata file      : ",covar_file,"\n",sep=""))
+	cat(paste("Background sig   : ",backgroundsigs,"\n",sep=""))
+	cat(paste("Exclude sig      : ",excludeSigs,"\n",sep=""))
 	cat(paste("Output path      : ",out_path,"\n",sep=""))
 	cat(paste("Threads          : ",threads,"\n",sep=""))
 	cat("=======================================\n")
@@ -192,5 +198,7 @@ sigDriver_annotate(signature_test=signature_test,
                    out_path=out_path,
                    results_file=results_file,
                    annotation_gtf=annotation_gtf,
+									 backgroundsigs=backgroundsigs,
+									 excludeSigs=excludeSigs,
                    sigProfilerInput=sigProfilerInput,
                    threads=threads)

@@ -18,6 +18,7 @@ signatureRepresentationAdjustment <- function(gns,
                              signature_test,
                              sigexpinfo,
                              backgroundsigs,
+                             excludeSigs,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
@@ -81,9 +82,12 @@ signatureRepresentationAdjustment <- function(gns,
 		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
 		#get list of backgrounds, do not weight on background
-		backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
-		#weighting of background
-		binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
+		backgroundsigslist=c()
+		if (nchar(backgroundsigs) > 0){
+			backgroundsigslist = strsplit(gsub("\\s","",backgroundsigs),",")[[1]]
+			#weighting of background
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
+		}
 
 
 		#overweight disabled
@@ -109,13 +113,27 @@ signatureRepresentationAdjustment <- function(gns,
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = -1
 		}
 		
+		#exclude signatures
+		if (nchar(excludeSigs) > 0){
+			excludeSigslist = strsplit(gsub("\\s","",excludeSigs),",")[[1]]
+			#weighting of background
+			print("Exclude signatures from correction:")
+			print(rownames(binSignatureWeights)[which(rownames(binSignatureWeights) %in% excludeSigslist)])
+			binSignatureWeights[which(rownames(binSignatureWeights) %in% excludeSigslist),] = -1
+		}
+		
+		
 		#test binning weighting results
 		#compute weight on each variant
 		sigweight=binSignatureWeights
 		
 		print("Computing variant-wise weight")
 		sigweight=binSignatureWeights
-		backgroundsigsidx = which(rownames(sigexpinfo) %in%  c(signature_test,backgroundsigslist))
+		
+		backgroundsigsidx=c()
+		if (length(backgroundsigslist) > 0){
+			backgroundsigsidx = which(rownames(sigexpinfo) %in%  c(signature_test,backgroundsigslist))
+		}
 		#preprocessing on matricies
 		#sigSampleInfoMatrix = samplemetatablewithentity[,rownames(sigexpinfo)]
 		#signature positivity matrix

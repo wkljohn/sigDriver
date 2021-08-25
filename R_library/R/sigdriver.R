@@ -17,6 +17,7 @@ sigDriver <- function(signature_test,
 											covar_file,
 											testregions,
 											backgroundsigs,
+											excludeSigs,
 											out_path,
 											threads,
 											entitycuttoff,
@@ -91,7 +92,7 @@ sigDriver <- function(signature_test,
 	#sigexpinfo = filter_exposures_matrix(sigexpinfo=sigexpinfo,sampleinfo=sampleinfo)
 	
 	#correct bias presented by signature-binning algorithm interaction
-	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
+	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,excludeSigs=excludeSigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
 	somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)
 
 	outfile = paste(out_path,"/",signature_test,"_intermediate_results.tsv",sep="")
