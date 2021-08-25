@@ -78,8 +78,6 @@ signatureRepresentationAdjustment <- function(gns,
 		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.0001)/(binStatsMeans+0.0001)) ^ variantFactor)	
 		#for average
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 3)	#0.001 
-		print("bin weight")
-		print(binSignatureWeights)
 		#binSignatureWeights[binSignatureWeights > 3] = 3
 		#get list of backgrounds, do not weight on background
 		backgroundsigslist=c()
@@ -89,6 +87,8 @@ signatureRepresentationAdjustment <- function(gns,
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
 		}
 
+		print("bin weight")
+		print(binSignatureWeights)
 
 		#overweight disabled
 		binSignatureWeights[binSignatureWeights > 1,]   = 1
