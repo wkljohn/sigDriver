@@ -96,7 +96,11 @@ signatureRepresentationAdjustment <- function(gns,
 
 
 		#overweight disabled
-		binSignatureWeights[binSignatureWeights > 1,]   = 1
+		if (verbose){
+			print("remove overweight:")
+			print(binSignatureWeights[which(binSignatureWeights > 1),])
+		}
+		binSignatureWeights[which(binSignatureWeights > 1),]   = 1
 		#weighting of signature
 		#upweight underrepresented signatures
 		ThresUnderPositivity = 0.5 ^ variantFactor
