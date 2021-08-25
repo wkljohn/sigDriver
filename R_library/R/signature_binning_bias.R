@@ -117,10 +117,12 @@ signatureRepresentationAdjustment <- function(gns,
 			samplemetatablewithentityRank[,signature_test] = round(samplemetatablewithentityRank[,signature_test] *  ( 1+10^(log10(1.5) + log10(ThBasline - sigExpPositivityInSamples[signature_test]))*rankscaler))
 			#* (1.5 +  ( ThresUnderPositivity - sigExpPositivityInSamples[signature_test]) / ThresUnderPositivity * 1.2 ))
 			samplemetatablewithentityRank[,signature_test] = samplemetatablewithentityRank[,signature_test] - min(samplemetatablewithentityRank[,signature_test]) + 1
-		}else if (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > underRepresentationThreshold || binStatsMeans[signature_test,] < 0.1){
+		}else if (signature_test %in% which(rownames(binSignatureWeights)  &&
+						 (binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] > underRepresentationThreshold || binStatsMeans[signature_test,] < 0.1)){
 			#weighting of tested-signature, by conditioned on weighting 
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = -1
 		}
+		
 		#exclude signatures
 		if (nchar(excludeSigs) > 0){
 			excludeSigslist = strsplit(gsub("\\s","",excludeSigs),",")[[1]]
