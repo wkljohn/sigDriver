@@ -24,7 +24,8 @@ signatureRepresentationAdjustment <- function(gns,
                              threads,
                              variantFactor=1.5,
                              entityFactor=1,
-                             binStatsList=NULL){
+                             binStatsList=NULL,
+                             verbose=TRUE){
    print("Calculating signature-bin distribution")
    print(paste(variantFactor,entityFactor))
 		if (is.null(binStatsList)){
@@ -76,6 +77,12 @@ signatureRepresentationAdjustment <- function(gns,
 		#print(binStatsMeans)
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
 		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.0001)/(binStatsMeans+0.0001)) ^ variantFactor)	
+		if (verbose){
+			print("sigExpPositivityInSamples:")
+			print(sigExpPositivityInSamples)
+			print("binStatMeans:")
+			print(binStatsMeans)
+		}
 		#for average
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^ 3)	#0.001 
 		#binSignatureWeights[binSignatureWeights > 3] = 3
