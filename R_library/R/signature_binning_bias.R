@@ -86,9 +86,7 @@ signatureRepresentationAdjustment <- function(gns,
 			#weighting of background
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% backgroundsigslist),] = 1
 		}
-
-		print("bin weight")
-		print(binSignatureWeights)
+
 
 		#overweight disabled
 		binSignatureWeights[binSignatureWeights > 1,]   = 1
@@ -112,7 +110,6 @@ signatureRepresentationAdjustment <- function(gns,
 			#weighting of tested-signature, by conditioned on weighting 
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% signature_test),] = -1
 		}
-		
 		#exclude signatures
 		if (nchar(excludeSigs) > 0){
 			excludeSigslist = strsplit(gsub("\\s","",excludeSigs),",")[[1]]
@@ -121,6 +118,9 @@ signatureRepresentationAdjustment <- function(gns,
 			print(rownames(binSignatureWeights)[which(rownames(binSignatureWeights) %in% excludeSigslist)])
 			binSignatureWeights[which(rownames(binSignatureWeights) %in% excludeSigslist),] = -1
 		}
+		print("bin weight")
+		print(binSignatureWeights)
+		
 		
 		
 		#test binning weighting results
