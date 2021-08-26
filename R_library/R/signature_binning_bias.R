@@ -77,6 +77,12 @@ signatureRepresentationAdjustment <- function(gns,
 		#print(binStatsMeans)
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
 		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.0001)/(binStatsMeans+0.0001)) ^ variantFactor)	
+		#center weights, converge mode
+		for (i in 1:10){
+			binNormFactor = mean(log2(binSignatureWeights[,1])*sigExpPositivityInSamples)
+			binSignatureWeights = 2^(log2(binSignatureWeights) - binNormFactor)
+			print(mean(log2(binSignatureWeights[,1])*sigExpPositivityInSamples))
+		}
 		if (verbose){
 			print("sigExpPositivityInSamples:")
 			print(sigExpPositivityInSamples)
@@ -103,8 +109,8 @@ signatureRepresentationAdjustment <- function(gns,
 		binSignatureWeights[which(binSignatureWeights > 1),]   = 1
 		#weighting of signature
 		#upweight underrepresented signatures
-		ThresUnderPositivity = 0.5 ^ variantFactor
-		rankscaler=20
+		ThresUnderPositivity = 0.5 ^ variantFactor	#disabled when FALSE
+		rankscaler=20	#disabled when FALSE
 		underRepresentationThreshold = 0.5
 		if (FALSE){ #sigExpPositivityInSamples[signature_test] < ThresUnderPositivity){
 			ThBasline = ThresUnderPositivity + 0.001
