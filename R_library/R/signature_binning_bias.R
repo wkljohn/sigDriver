@@ -22,7 +22,7 @@ signatureRepresentationAdjustment <- function(gns,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
-                             variantFactor=2.0,
+                             variantFactor=1.5,
                              entityFactor=1,
                              binStatsList=NULL,
                              verbose=TRUE){
@@ -77,12 +77,12 @@ signatureRepresentationAdjustment <- function(gns,
 		#print(binStatsMeans)
 		#binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.001)/(binStatsMeans+0.001)) ^1.5)	#0.001 is the error
 		binSignatureWeights =  data.frame(((sigExpPositivityInSamples+0.0001)/(binStatsMeans+0.0001)) ^ variantFactor)	
-		#center weights, converge mode
-		for (i in 1:10){
-			binNormFactor = mean(log2(binSignatureWeights[,1])*sigExpPositivityInSamples)
-			binSignatureWeights = 2^(log2(binSignatureWeights) - binNormFactor)
-			print(mean(log2(binSignatureWeights[,1])*sigExpPositivityInSamples))
-		}
+#		#center weights, converge mode
+#		for (i in 1:10){
+#			binNormFactor = mean(log2(binSignatureWeights[,1])*sigExpPositivityInSamples)
+#			binSignatureWeights = 2^(log2(binSignatureWeights) - binNormFactor)
+#			print(mean(log2(binSignatureWeights[,1])*sigExpPositivityInSamples))
+#		}
 		if (verbose){
 			print("sigExpPositivityInSamples:")
 			print(sigExpPositivityInSamples)
