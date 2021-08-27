@@ -22,7 +22,7 @@ signatureRepresentationAdjustment <- function(gns,
                              somaticvarranges,
                              samplemetatablewithentity,
                              threads,
-                             variantFactor=1.5,
+                             variantFactor=2.0,
                              entityFactor=1,
                              binStatsList=NULL,
                              verbose=TRUE){
