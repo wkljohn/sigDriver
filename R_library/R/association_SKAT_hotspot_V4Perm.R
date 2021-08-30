@@ -96,7 +96,7 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 	    }
 	    
 	    
-	    if (!is.null(dim(listvarinregion))){
+	    if (length(listvarinregion) > 0){
 		    #split into information tables
 		    varframe = data.frame( variantsassociated[listvarinregion,])
 		    coordinatesframe = unique(varframe[,c(1,2,3)])
