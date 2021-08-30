@@ -149,6 +149,7 @@ sigDriver <- function(signature_test,
 	colnames(resultsSKATdf) = c("Region","Tested_regions","Sites","Variants","n_cases","Q","p_value","p_value_each","Entities")[1:dim(resultsSKATdf)[2]]
 	fulloutpath=paste(out_path,"/",signature_test,"_results_FULL.tsv",sep="")
 	Collapsedoutpath=paste(out_path,"/",signature_test,"_results.tsv",sep="")
+	CollapsedVObjectPath=paste(out_path,"/",signature_test,"_var_meta.rds",sep="")
 
 	if (F){	#test
 		igene=which(gns$SYMBOL=="chr1:206858001-206860001")
@@ -175,6 +176,7 @@ sigDriver <- function(signature_test,
 
 	#collapse output region
 	write.table(resultsSKATdf,fulloutpath,col.names = T,quote = F,row.names=F,sep="\t")
+	saveRDS(somaticvarranges,CollapsedVObjectPath)
 	resultsSKATcollapseddf = collapse_hits_by_window(resultsSKATdf)
 
 	#filter hits

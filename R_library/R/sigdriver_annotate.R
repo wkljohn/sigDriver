@@ -83,7 +83,7 @@ sigDriver_annotate <- function(signature_test,
 
 	#correct bias presented by signature-binning algorithm interaction
 	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,excludeSigs=excludeSigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
-	#somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)
+	#somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)	#very hard to replicate the random seed
 
 	#run main
 	outfile = paste(out_path,"/",signature_test,"_annotation_intermediate_results.tsv",sep="")
