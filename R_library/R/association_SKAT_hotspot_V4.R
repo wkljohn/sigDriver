@@ -109,7 +109,7 @@ doassocandwriteSKAThotspot <- function (igene,
 	      }else{
 	        listvarinregion = c()
 	      }
-	    }else{-
+	    }else{
 	      testedRegionCoordinates = paste(t(cbind(as.character(seqnames(testgns1gene)),start(testgns1gene),end(testgns1gene))),sep=":",collapse=":")
 	      
 	    }

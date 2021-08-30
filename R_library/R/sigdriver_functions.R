@@ -452,7 +452,7 @@ correctExposures <- function(values,threshold = 100,correctLowerBound=FALSE){
 	#########rebuild numbers############
 	valuescorrlist = list()
 	if (correctLowerBound){
-		nowvalue = meanDist * 2
+		nowvalue = meanDist * 3
 	}else{
 		nowvalue = min(values)#meanDist
 	}
