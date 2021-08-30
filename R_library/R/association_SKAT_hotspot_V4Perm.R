@@ -88,8 +88,6 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 	        listvarinregion = unique(splitByOverlaptolist(topsomaticvranges, variantsassociated, "SYMBOL"))
 	      }else{
 	        listvarinregion = c()
-	        weightframencLIST = c()
-	        skipvarname="NA"
 	      }
 	    }else{
 	      testedRegionCoordinates = paste(t(cbind(as.character(seqnames(testgns1gene)),start(testgns1gene),end(testgns1gene))),sep=":",collapse=":")
@@ -211,6 +209,9 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 		    }else{
 		      skipvarname="NA"
 		    }
+	    }else{
+        weightframencLIST = c()
+        skipvarname="NA"
 	    }
 	    
 	  }else{
