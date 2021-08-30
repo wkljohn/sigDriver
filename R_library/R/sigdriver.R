@@ -34,6 +34,7 @@ sigDriver <- function(signature_test,
 	
 	minentityposcasespct = entitycuttoff 
 	corrOutliersThres = outliersThreshold
+	corrLB = FALSE
 	
 	#tweak cut-off for signatures with lower median sample mutation load
 	if (signature_test == "SBS84" || signature_test == "SBS9"|| signature_test == "Signature_EX11"){
@@ -43,6 +44,7 @@ sigDriver <- function(signature_test,
 		#frame_pruned_min_nvar = 6
 		corrVariantFactor = 1
 		corrOutliersThres = 200
+		corrLB = TRUE
 	}
 	#minentityposcasespct = 0.01
 	#min_testing_bin_vars = 7
@@ -72,7 +74,7 @@ sigDriver <- function(signature_test,
   	#sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures > sigMean + 4 * sigSD)] = max(sampleinfofiltered$normalized_exposures[which(sampleinfofiltered$normalized_exposures < sigMean + 4 * sigSD)])
   	#sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] = sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0] - min(sampleinfofiltered$normalized_exposures[sampleinfofiltered$normalized_exposures > 0]) + 0.001
   	#sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures)
-  	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered,threshold=corrOutliersThres)
+  	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered,threshold=corrOutliersThres,correctLowerBound=corrLB)
   }
 	#test ranking
 	sampleinfofiltered$sigRank = rank(sampleinfofiltered$normalized_exposures,ties.method="max")

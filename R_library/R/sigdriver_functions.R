@@ -374,17 +374,17 @@ calculate_lambda <- function(resultsSKATdf){
 
 
 
-correctExposuresByEntity <- function(sampleinfofiltered,threshold=100){
+correctExposuresByEntity <- function(sampleinfofiltered,threshold=100,correctLowerBound=FALSE){
 	listEntities = unique(sampleinfofiltered$entity)
 	for (i in 1:length(listEntities)){
 		sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures = correctExposures(sampleinfofiltered[which(sampleinfofiltered$entity == listEntities[i]),]$normalized_exposures,threshold=threshold)
 	}
-	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=threshold*1.4)
+	sampleinfofiltered$normalized_exposures = correctExposures(sampleinfofiltered$normalized_exposures,threshold=threshold*1.4,correctLowerBound=correctLowerBound)
 	return (sampleinfofiltered)
 }
 
 
-correctExposures <- function(values,threshold = 100){
+correctExposures <- function(values,threshold = 100,correctLowerBound=FALSE){
 	#min 5 non-zero values to do correction
 	nonZeroValues = length(which(values > 0))
 	if (nonZeroValues < 6){
@@ -406,8 +406,8 @@ correctExposures <- function(values,threshold = 100){
 	LBknnscore <- min(knn_scores[knn_scores>0])
 	threshold <-  ((median(knn_scores[knn_scores>0])-LBknnscore) * threshold) + LBknnscore
 	UQOutliersCnt <- length(which(knn_scores[round(length(knn_scores)/2):length(knn_scores)] > threshold))
-#lof_scores <- DDoutlier::LDF(nonneg_exp)
-#cof_scores <- DDoutlier::COF(nonneg_exp)
+	#lof_scores <- DDoutlier::LDF(nonneg_exp)
+	#cof_scores <- DDoutlier::COF(nonneg_exp)
 	print(paste("N outliers",threshold,UQOutliersCnt))
 
 	valuesRank = rank(values,ties.method="min")
@@ -451,7 +451,11 @@ correctExposures <- function(values,threshold = 100){
 	
 	#########rebuild numbers############
 	valuescorrlist = list()
-	nowvalue = min(values)#meanDist
+	if (correctLowerBound){
+		nowvalue = meanDist
+	}else{
+		nowvalue = min(values)#meanDist
+	}
 	for (i in 1:dim(distdf)[1]){
 		nowvalue = nowvalue + distdf$y[i]
 		valuescorrlist[[length(valuescorrlist)+1]] = nowvalue
