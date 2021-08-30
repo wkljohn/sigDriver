@@ -72,6 +72,9 @@ Options:
     --rand      | -a        Random seed (default:1)
     --threads   | -t        Number of threads (default:1)
     --correct   | -C        Correction for sigProfiler output (default:1)
+    --entity    | -E        Cut-off for entity filter (default:0.05)
+    --correct-exposures     Binning-correction using an alternative set of signatures (default:NA)
+    --exclude   | -x        Exclude signature in binning-correction
     --help      | -h        Show this help message
 "
                             
@@ -82,12 +85,15 @@ Options:
 	  make_option(c("-s", "--signature"), type = "character", dest = "signature_test"),
 	  make_option(c("-v", "--variant"), type = "character", dest = "variant_file"),
 	  make_option(c("-e", "--exposures"), type = "character", dest = "signature_file"),
+	  make_option(c("--correct-exposures"), type = "character", dest = "correction_signature_file",default=NA),
 	  make_option(c("-m", "--metadata"), type = "character", dest = "covar_file"),
 	  make_option(c("-o", "--out"), type = "character", dest = "out_path"),
 	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
 	  make_option(c("-x", "--exclude"), type = "character", dest = "excludeSigs",default=""),
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
 	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
+	  make_option(c("-E", "--entity"), type = "numeric", dest = "minentityposcasespct",default=0.05),
+	  make_option(c("-L", "--outliers"), type = "numeric", dest = "outliersThreshold",default=100),
 	  make_option(c("-t", "--threads"), type = "numeric", dest = "threads",default=1)
 	)
 	
@@ -145,9 +151,12 @@ Options:
 	out_path = argv$out_path
 	threads = argv$threads
 	randSeed = argv$randSeed
-	sigProfilerInput = as.logical(argv$correction)
+	sigProfilerInput = as.numeric(argv$correction)
+	minentityposcasespct = argv$minentityposcasespct
+	outliersThreshold = argv$outliersThreshold
 	backgroundsigs = argv$backgroundsigs
 	excludeSigs = argv$excludeSigs
+	correction_signature_file = argv$correction_signature_file
 
         #check file exists
         if (!file.exists(annotation_gtf)){ stop("GTF file not found") }
@@ -163,9 +172,13 @@ Options:
 	cat(paste("Signature to test: ",signature_test,"\n",sep=""))
 	cat(paste("Variant file     : ",variant_file,"\n",sep=""))
 	cat(paste("Signature file   : ",signature_file,"\n",sep=""))
+	cat(paste("Correct Sig file : ",correction_signature_file,"\n",sep=""))
 	cat(paste("medata file      : ",covar_file,"\n",sep=""))
 	cat(paste("Background sig   : ",backgroundsigs,"\n",sep=""))
 	cat(paste("Exclude sig      : ",excludeSigs,"\n",sep=""))
+	cat(paste("Entity cut-off   : ",minentityposcasespct,"\n",sep=""))
+	cat(paste("sigProfiler input: ",sigProfilerInput,"\n",sep=""))
+	cat(paste("Outliers cut-off : ",outliersThreshold,"\n",sep=""))
 	cat(paste("Output path      : ",out_path,"\n",sep=""))
 	cat(paste("Threads          : ",threads,"\n",sep=""))
 	cat("=======================================\n")
@@ -200,5 +213,9 @@ sigDriver_annotate(signature_test=signature_test,
                    annotation_gtf=annotation_gtf,
 									 backgroundsigs=backgroundsigs,
 									 excludeSigs=excludeSigs,
+                   threads=threads,
+									 entitycuttoff=minentityposcasespct,
+									 outliersThreshold=outliersThreshold,
                    sigProfilerInput=sigProfilerInput,
-                   threads=threads)
+          				 correction_signature_file=correction_signature_file,
+									 randSeed=randSeed)

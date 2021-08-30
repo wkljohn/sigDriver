@@ -8,6 +8,7 @@
 #' @param results_file Path to the results file to load
 #' @param annotation_gtf Path to the gtf file for annotation
 #' @param threads Number of threads for running
+#' @param entitycuttoff cut-off for entity positivity
 #' @param sigProfilerInput(default=TRUE) Apply adjustments for sigProfiler signature exposure outputs
 #' @param randSeed(default=1) Random seed
 #' @import data.table
@@ -22,8 +23,12 @@ sigDriver_annotate <- function(signature_test,
 											backgroundsigs,
 											excludeSigs,
 											threads,
+											entitycuttoff,
+											outliersThreshold,
 											sigProfilerInput=TRUE,
-											randSeed=1){
+											correction_signature_file=NA,
+											randSeed=1,
+											verbose=TRUE){
 
 	#libraries
 	library(GenomicRanges,quietly=T)
@@ -32,8 +37,12 @@ sigDriver_annotate <- function(signature_test,
 	library(dplyr,quietly=T)
 	library(rtracklayer,quietly=T)
 
+	minentityposcasespct = entitycuttoff 
+	corrOutliersThres = outliersThreshold
+	corrLB = FALSE
+	
 	#tweak cut-off for signatures with lower median sample mutation load
-	if (signature_test == "SBS84" || signature_test == "SBS9"){
+	if (signature_test == "SBS84" || signature_test == "SBS9"|| signature_test == "Signature_EX11"|| signature_test == "SBS-E9"){
 		print("lower sample mutation load mode")
 		minentityposcasespct = 0.02
 		min_testing_bin_vars = 7
@@ -47,12 +56,20 @@ sigDriver_annotate <- function(signature_test,
 	sigexpinfo = read_signature_exposures_matrix(signature_file)
 	sampleinfo = read_metadata_matrix(covar_file,covariates)
 	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation)
+		#merge with signatures for correction
+	if (is.na(correction_signature_file)){
+		sampleinfo = merge_allsignature_samples(sampleinfo = sampleinfo,sigexpinfo = sigexpinfo)
+	}else{
+		if (verbose){print("Use correction signature file")}
+		sigexpinfo_corr = read_signature_exposures_matrix(correction_signature_file)
+		sampleinfo = merge_allsignature_samples(sampleinfo = sampleinfo,sigexpinfo = sigexpinfo_corr)
+	}
 	sampleinfo = filter_sample_info_matrix_by_vrange(sampleinfo=sampleinfo,somaticvarranges=somaticvarranges)
 	entities_include = get_signature_positive_entities(sampleinfo=sampleinfo,minentityposcasespct=minentityposcasespct,maxentityposcasespct=maxentityposcasespct)
 	sampleinfofiltered = filter_sample_info_matrix(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,entities_include=entities_include)
 
 	if (sigProfilerInput){
-	 	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered,threshold=corrOutliersThres)
+	 	sampleinfofiltered = correctExposuresByEntity(sampleinfofiltered,threshold=corrOutliersThres,correctLowerBound=corrLB)
   }
 	#keep only tumors to be tested in variants table
 	gns = read_genomic_bins(sigdriver_results)
