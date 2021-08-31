@@ -191,6 +191,7 @@ intersetGRs <- function(queryGR,refGR){
 	rownames(queryGR_DF) = queryGR_DF$ID
 	refGR$WEIGHT = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$WEIGHT
 	refGR$rand = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$rand
+	refGR[which(is.na(refGR$WEIGHT))]$WEIGHT = 1
 	return(refGR)
 }
 
