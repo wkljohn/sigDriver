@@ -183,11 +183,11 @@ intersetGRs <- function(queryGR,refGR){
 	overlap = findOverlaps(queryGR,refGR)
 	refGR = refGR[subjectHits(overlap)]
 	queryGR = queryGR[queryHits(overlap)]
-	print("intersected GR")
+	#print("intersected GR")
 	queryGR_DF = data.frame(queryGR,stringAsFactors=F)
 	queryGR_DF$ID = paste(queryGR_DF$seqnames,queryGR_DF$start,queryGR_DF$case_ID)
 	queryGR_DF = queryGR_DF[!duplicated(queryGR_DF$ID),]
-	print("ID lookup")
+	#print("ID lookup")
 	rownames(queryGR_DF) = queryGR_DF$ID
 	refGR$WEIGHT = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$WEIGHT
 	refGR$rand = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$rand
