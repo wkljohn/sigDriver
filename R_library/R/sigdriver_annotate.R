@@ -65,7 +65,7 @@ sigDriver_annotate <- function(signature_test,
 	#keep only tumors to be tested in variants table
 	gns = read_genomic_bins(sigdriver_results)
 	#reduce the bins to test by variant distance
-	somaticvarranges_lastrun = merge_GR(readRDS(variant_file))
+	somaticvarranges_lastrun = merge_GR(readRDS(variant_meta))
 	somaticvarranges = intersetGRs(somaticvarranges_lastrun,somaticvarranges)
 	gns = prefilter_genomic_bins(gns,somaticvarranges,framesize_pruned,frame_pruned_min_nvar)
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
