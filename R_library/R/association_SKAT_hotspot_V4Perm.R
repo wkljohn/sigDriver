@@ -236,9 +236,9 @@ doassocandwriteSKAThotspotPerm <- function (igene,
       samplemetatablewithentity$gender = 3- as.numeric(samplemetatablewithentity$gender)
       print(table(samplemetatablewithentity$gender))
       if (length(unique(samplemetatablewithentity$entity)) == 1){
-        obj<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")
+        obj<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")
       }else{
-        obj<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ samplemetatablewithentity$entity + samplemetatablewithentity$total_variants + log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")
+        obj<-SKAT_Null_Model( samplemetatablewithentity$normalized_exposures ~ samplemetatablewithentity$entity +  log2(samplemetatablewithentity$total_variants + 1)+ samplemetatablewithentity$gender, out_type="C")
       }
 			#
 			obj$id_include = samplemetatablewithentity$ID
