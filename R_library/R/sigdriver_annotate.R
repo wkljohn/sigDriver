@@ -26,8 +26,6 @@ sigDriver_annotate <- function(signature_test,
 											entitycuttoff,
 											outliersThreshold,
 											sigProfilerInput=TRUE,
-											correction_signature_file=NA,
-											randSeed=1,
 											verbose=TRUE){
 
 	#libraries
@@ -52,7 +50,7 @@ sigDriver_annotate <- function(signature_test,
 	#run preparation, small differences with sigdriver main routine
 	sigdriver_results = read.table(results_file,sep="\t",header=T,stringsAsFactors=F)
 	sigdriver_results = sigdriver_results[which(sigdriver_results$p_adjust_BH < 0.05),]
-	somaticvarranges = read_variants_ranges_withGT(variant_file)
+	somaticvarranges = merge_GR(readRDS(variant_file)) #read_variants_ranges_withGT(variant_file)
 	sigexpinfo = read_signature_exposures_matrix(signature_file)
 	sampleinfo = read_metadata_matrix(covar_file,covariates)
 	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation)
@@ -73,17 +71,10 @@ sigDriver_annotate <- function(signature_test,
   }
 	#keep only tumors to be tested in variants table
 	gns = read_genomic_bins(sigdriver_results)
-	#first filt variant range by sample list
-	somaticvarranges = samplefilter_somatic_vranges(somaticvarranges,sampleinfofiltered)
 	#reduce the bins to test by variant distance
 	gns = prefilter_genomic_bins(gns,somaticvarranges,framesize_pruned,frame_pruned_min_nvar)
-	#in turn shrink the variant array by bins to test
-	somaticvarranges = prefilter_somatic_vranges(gns,somaticvarranges)
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
 
-	#correct bias presented by signature-binning algorithm interaction
-	somaticvarranges = signatureRepresentationAdjustment(gns=gns,signature_test=signature_test,sigexpinfo=sigexpinfo,backgroundsigs=backgroundsigs,excludeSigs=excludeSigs,somaticvarranges=somaticvarranges,samplemetatablewithentity=sampleinfofiltered,threads=threads,variantFactor=corrVariantFactor)
-	#somaticvarranges = somaticVariantsProbabalisticSubsampling(somaticvarranges)	#very hard to replicate the random seed
 
 	#run main
 	outfile = paste(out_path,"/",signature_test,"_annotation_intermediate_results.tsv",sep="")

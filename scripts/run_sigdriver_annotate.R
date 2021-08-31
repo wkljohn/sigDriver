@@ -59,7 +59,7 @@ if (T){
 Required:
     --gtf       | -g        Path of the gtf file for annotation
     --signature | -s        Name of the signature to test
-    --variant   | -v        Location of variants file in simple format
+    --variant   | -v        Location of variants metadata in RDS format
     --exposures | -e        Location of signature exposures file
                             Column: signature names
                             Rows  : sample ID
@@ -69,11 +69,9 @@ Required:
     --out       | -o        Path for output
     
 Options:
-    --rand      | -a        Random seed (default:1)
     --threads   | -t        Number of threads (default:1)
     --correct   | -C        Correction for sigProfiler output (default:1)
     --entity    | -E        Cut-off for entity filter (default:0.05)
-    --correct-exposures     Binning-correction using an alternative set of signatures (default:NA)
     --exclude   | -x        Exclude signature in binning-correction
     --help      | -h        Show this help message
 "
@@ -91,7 +89,6 @@ Options:
 	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
 	  make_option(c("-x", "--exclude"), type = "character", dest = "excludeSigs",default=""),
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
-	  make_option(c("-a", "--rand"), type = "character", dest = "randSeed",default=1),
 	  make_option(c("-E", "--entity"), type = "numeric", dest = "minentityposcasespct",default=0.05),
 	  make_option(c("-L", "--outliers"), type = "numeric", dest = "outliersThreshold",default=100),
 	  make_option(c("-t", "--threads"), type = "numeric", dest = "threads",default=1)
@@ -118,7 +115,7 @@ Options:
 		showhelp=T
 	}
 	if (!("variant_file" %in% names(argv))){
-		cat("Please provide variants file in simple format\n")
+		cat("Please provide variants metadata file in RDS format\n")
 		showhelp=T
 	}
 	if (!("signature_file" %in% names(argv))){
@@ -150,13 +147,11 @@ Options:
 	annotation_gtf = argv$annotation_gtf
 	out_path = argv$out_path
 	threads = argv$threads
-	randSeed = argv$randSeed
 	sigProfilerInput = as.numeric(argv$correction)
 	minentityposcasespct = argv$minentityposcasespct
 	outliersThreshold = argv$outliersThreshold
 	backgroundsigs = argv$backgroundsigs
 	excludeSigs = argv$excludeSigs
-	correction_signature_file = argv$correction_signature_file
 
         #check file exists
         if (!file.exists(annotation_gtf)){ stop("GTF file not found") }
@@ -172,7 +167,6 @@ Options:
 	cat(paste("Signature to test: ",signature_test,"\n",sep=""))
 	cat(paste("Variant file     : ",variant_file,"\n",sep=""))
 	cat(paste("Signature file   : ",signature_file,"\n",sep=""))
-	cat(paste("Correct Sig file : ",correction_signature_file,"\n",sep=""))
 	cat(paste("medata file      : ",covar_file,"\n",sep=""))
 	cat(paste("Background sig   : ",backgroundsigs,"\n",sep=""))
 	cat(paste("Exclude sig      : ",excludeSigs,"\n",sep=""))
@@ -216,6 +210,4 @@ sigDriver_annotate(signature_test=signature_test,
                    threads=threads,
 									 entitycuttoff=minentityposcasespct,
 									 outliersThreshold=outliersThreshold,
-                   sigProfilerInput=sigProfilerInput,
-          				 correction_signature_file=correction_signature_file,
-									 randSeed=randSeed)
+                   sigProfilerInput=sigProfilerInput)
