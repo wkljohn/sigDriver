@@ -181,8 +181,8 @@ merge_GR <- function(GRList){
 intersetGRs <- function(queryGR,refGR){
 	require(GenomicRanges)
 	overlap = findOverlaps(queryGR,refGR)
-	refGR = refGR[subjectHits(overlap)]
-	queryGR = queryGR[queryHits(overlap)]
+	refGR = refGR[unique(subjectHits(overlap))]
+	queryGR = queryGR[unique(queryHits(overlap))]
 	#print("intersected GR")
 	queryGR_DF = data.frame(queryGR,stringAsFactors=F)
 	queryGR_DF$ID = paste(queryGR_DF$seqnames,queryGR_DF$start,queryGR_DF$case_ID)
@@ -191,7 +191,7 @@ intersetGRs <- function(queryGR,refGR){
 	rownames(queryGR_DF) = queryGR_DF$ID
 	refGR$WEIGHT = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$WEIGHT
 	refGR$rand = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$rand
-	refGR[which(is.na(refGR$WEIGHT))]$WEIGHT = 1
+	if (length(which(is.na(refGR$WEIGHT))) > 0){ refGR[which(is.na(refGR$WEIGHT))]$WEIGHT = 1 }
 	return(refGR)
 }
 
