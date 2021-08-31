@@ -139,7 +139,7 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 		    
 		    #case-genotype matrix, at least 6 variants
 		    if (dim(varframe)[1] >= min_tested_variants){
-		      print(data.frame(varframe))
+		      #print(data.frame(varframe))
 		      varframebycase = dcast(varframe,start~case_ID,fun.aggregate = function(x){return(as.integer(length(x)));})
 		      
 		      varsamplesabsent = samplemetatablewithentity$ID[!(samplemetatablewithentity$ID %in% colnames(varframebycase))]

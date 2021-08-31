@@ -83,9 +83,9 @@ getregionTopMutatedRanges <- function(gregion,variantRanges,tumorsincluded,sampl
   mutationfreqlistframe = mutationfreqlistframe[which(!is.na(mutationfreqlistframe$START)),]
   
   totallen = dim(mutationfreqlistframe)[1]
-  medianweight = median(mutationfreqlistframe$WEIGHTED)
-  sdmut = sd(mutationfreqlistframe$WEIGHTED)
-  maxmut = max(mutationfreqlistframe$WEIGHTED)
+  medianweight = median(mutationfreqlistframe$WEIGHTED,na.rm=T)
+  sdmut = sd(mutationfreqlistframe$WEIGHTED,na.rm=T)
+  maxmut = max(mutationfreqlistframe$WEIGHTED,na.rm=T)
   maxmutcoord = mutationfreqlistframe$START[which(mutationfreqlistframe$WEIGHTED == maxmut)]
   print(medianweight)
   print(sdmut * SDsmaxthres)
