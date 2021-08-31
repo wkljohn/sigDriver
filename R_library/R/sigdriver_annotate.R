@@ -15,13 +15,12 @@
 #' @export
 sigDriver_annotate <- function(signature_test,
 											variant_file,
+											variant_meta,
 											signature_file,
 											covar_file,
 											out_path,
 											results_file,
 											annotation_gtf,
-											backgroundsigs,
-											excludeSigs,
 											threads,
 											entitycuttoff,
 											outliersThreshold,
@@ -50,7 +49,7 @@ sigDriver_annotate <- function(signature_test,
 	#run preparation, small differences with sigdriver main routine
 	sigdriver_results = read.table(results_file,sep="\t",header=T,stringsAsFactors=F)
 	sigdriver_results = sigdriver_results[which(sigdriver_results$p_adjust_BH < 0.05),]
-	somaticvarranges = merge_GR(readRDS(variant_file)) #read_variants_ranges_withGT(variant_file)
+	somaticvarranges = read_variants_ranges_withGT(variant_file)
 	sigexpinfo = read_signature_exposures_matrix(signature_file)
 	sampleinfo = read_metadata_matrix(covar_file,covariates)
 	sampleinfo = merge_signature_samples(sampleinfo=sampleinfo,sigexpinfo=sigexpinfo,signature_test=signature_test,thresholdhypmutation=thresholdhypmutation)
@@ -66,6 +65,8 @@ sigDriver_annotate <- function(signature_test,
 	#keep only tumors to be tested in variants table
 	gns = read_genomic_bins(sigdriver_results)
 	#reduce the bins to test by variant distance
+	somaticvarranges_lastrun = merge_GR(readRDS(variant_file))
+	somaticvarranges = intersetGRs(somaticvarranges_lastrun,somaticvarranges)
 	gns = prefilter_genomic_bins(gns,somaticvarranges,framesize_pruned,frame_pruned_min_nvar)
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
 

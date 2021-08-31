@@ -178,6 +178,20 @@ merge_GR <- function(GRList){
 	return(GR)
 }
 
+intersetGRs <- function(queryGR,refGR){
+	require(GenomicRanges)
+	overlap = findOverlaps(queryGR,refGR)
+	refGR = refGR[unique(subjectHits(overlap))]
+	queryGR = queryGR[unique(queryHits(overlap))]
+	queryGR_DF = data.frame(queryGR,stringAsFactors=F)
+	queryGR_DF$ID = paste(queryGR_DF$seqnames,queryGR_DF$start,queryGR_DF$case_ID)
+	queryGR_DF = queryGR_DF[!duplicated(queryGR_DF$ID),]
+	rownames(queryGR_DF) = queryGR_DF$ID
+	refGR$WEIGHT = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$WEIGHT
+	refGR$rand = queryGR_DF[paste(seqnames(refGR),start(refGR),refGR$case_ID),]$rand
+	return(refGR)
+}
+
 
 split_variants_GR_by_chr <- function(somaticvarranges){
 	

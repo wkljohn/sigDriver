@@ -54,12 +54,13 @@ if (T){
 
 	#Rscript run_sigdriver_annotate.R -l /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/drivers/CATCH/SBS2_results.tsv -g /icgc/ngs_share/assemblies/hg19_GRCh37_1000genomes/databases/gencode/gencode19/gencode.v19.annotation.gtf -s SBS13 -v /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/somatic_SNVs/simple/CATCH_all_SNV_filtart.simple.gz -t 8 -e /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/signatures/CATCH/SNVs_consensus/merged_CATCH_exposure_SBS_withSPID_forsigdrive.tsv -m /b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/datafile/merged_pheno_tab.V3.tsv -o /b06x-isilon/b06x-c/chromothripsis/results/hipo/summary/drivers/CATCH/test/
 	help_message <-
-"usage: Rscript sigdriver_annotate.R [options] <-l results file to load> <-g gtf file> <-s signature test> <-v simple variant file> <-e signature exposures file> <-m metadata file> <-o out path>
+"usage: Rscript sigdriver_annotate.R [options] <-l results file to load> <-g gtf file> <-s signature test> <-v simple variant file> <-d rds variant metadata> <-e signature exposures file> <-m metadata file> <-o out path>
 
 Required:
     --gtf       | -g        Path of the gtf file for annotation
     --signature | -s        Name of the signature to test
-    --variant   | -v        Location of variants metadata in RDS format
+    --variant   | -v        Location of variants in simple format
+    --rds       | -d        Location of variants metadata in RDS format
     --exposures | -e        Location of signature exposures file
                             Column: signature names
                             Rows  : sample ID
@@ -72,7 +73,6 @@ Options:
     --threads   | -t        Number of threads (default:1)
     --correct   | -C        Correction for sigProfiler output (default:1)
     --entity    | -E        Cut-off for entity filter (default:0.05)
-    --exclude   | -x        Exclude signature in binning-correction
     --help      | -h        Show this help message
 "
                             
@@ -82,12 +82,11 @@ Options:
 	  make_option(c("-g", "--gtf"), type = "character", dest = "annotation_gtf"),
 	  make_option(c("-s", "--signature"), type = "character", dest = "signature_test"),
 	  make_option(c("-v", "--variant"), type = "character", dest = "variant_file"),
+	  make_option(c("-d", "--rds"), type = "character", dest = "variant_meta"),
 	  make_option(c("-e", "--exposures"), type = "character", dest = "signature_file"),
 	  make_option(c("--correct-exposures"), type = "character", dest = "correction_signature_file",default=NA),
 	  make_option(c("-m", "--metadata"), type = "character", dest = "covar_file"),
 	  make_option(c("-o", "--out"), type = "character", dest = "out_path"),
-	  make_option(c("-b", "--background"), type = "character", dest = "backgroundsigs",default="SBS1,SBS5,SBS8"),
-	  make_option(c("-x", "--exclude"), type = "character", dest = "excludeSigs",default=""),
 	  make_option(c("-C", "--correct"), type = "character", dest = "correction",default=1),
 	  make_option(c("-E", "--entity"), type = "numeric", dest = "minentityposcasespct",default=0.05),
 	  make_option(c("-L", "--outliers"), type = "numeric", dest = "outliersThreshold",default=100),
@@ -142,6 +141,7 @@ Options:
 	results_file = argv$results_file
 	signature_test = argv$signature_test
 	variant_file = argv$variant_file
+	variant_meta = argv$variant_meta
 	signature_file = argv$signature_file
 	covar_file = argv$covar_file
 	annotation_gtf = argv$annotation_gtf
@@ -150,8 +150,6 @@ Options:
 	sigProfilerInput = as.numeric(argv$correction)
 	minentityposcasespct = argv$minentityposcasespct
 	outliersThreshold = argv$outliersThreshold
-	backgroundsigs = argv$backgroundsigs
-	excludeSigs = argv$excludeSigs
 
         #check file exists
         if (!file.exists(annotation_gtf)){ stop("GTF file not found") }
@@ -166,10 +164,9 @@ Options:
 	cat(paste("Results file     : ",results_file,"\n",sep=""))
 	cat(paste("Signature to test: ",signature_test,"\n",sep=""))
 	cat(paste("Variant file     : ",variant_file,"\n",sep=""))
+	cat(paste("Variant metadata : ",variant_meta,"\n",sep=""))
 	cat(paste("Signature file   : ",signature_file,"\n",sep=""))
 	cat(paste("medata file      : ",covar_file,"\n",sep=""))
-	cat(paste("Background sig   : ",backgroundsigs,"\n",sep=""))
-	cat(paste("Exclude sig      : ",excludeSigs,"\n",sep=""))
 	cat(paste("Entity cut-off   : ",minentityposcasespct,"\n",sep=""))
 	cat(paste("sigProfiler input: ",sigProfilerInput,"\n",sep=""))
 	cat(paste("Outliers cut-off : ",outliersThreshold,"\n",sep=""))
@@ -200,13 +197,12 @@ Options:
 require(sigDriver)
 sigDriver_annotate(signature_test=signature_test,
                    variant_file=variant_file,
+                   variant_meta=variant_meta,
                    signature_file=signature_file,
                    covar_file=covar_file,
                    out_path=out_path,
                    results_file=results_file,
                    annotation_gtf=annotation_gtf,
-									 backgroundsigs=backgroundsigs,
-									 excludeSigs=excludeSigs,
                    threads=threads,
 									 entitycuttoff=minentityposcasespct,
 									 outliersThreshold=outliersThreshold,
