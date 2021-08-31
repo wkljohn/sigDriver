@@ -69,11 +69,11 @@ sigDriver_annotate <- function(signature_test,
 	#reduce the bins to test by variant distance
 	gns = prefilter_genomic_bins(gns,somaticvarranges,framesize_pruned,frame_pruned_min_nvar)
 	somaticvarranges = prefilter_somatic_vranges(gns,somaticvarranges)
-	
 	print("load variant metas")
 	somaticvarranges_lastrun = merge_GR(readRDS(variant_meta))
 	print("merge variant metas")
 	somaticvarranges = intersetGRs(somaticvarranges_lastrun,somaticvarranges)
+	print(head(somaticvarranges))
 	print("done merge variant")
 	somaticvarranges = split_variants_GR_by_chr(somaticvarranges) #acceleration by splitting chr, only after whole variant file operations finished
 
