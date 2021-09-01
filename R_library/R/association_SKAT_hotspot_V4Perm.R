@@ -55,15 +55,15 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 
 	      if (add_variants == 1){
 	        minvarinframe = 1 
-	        minimumframeinclude = 4
+	        #minimumframeinclude = 4
 	        topregions <- getregionTopMutatedRanges(testgns1gene,
 	                                                variantsassociated[listvarinregion,], #somaticvarranges[[idxchr]],
 	                                                samplemetatablewithentity$ID,
 	                                                samplemetatablewithentity,
 	                                                pctin,restricted,
 	                                                minvariantinframe = minvarinframe,
-	                                                minimumframeinclude = minimumframeinclude,
 	                                                useSigWeight=TRUE)
+	                                                
 	      }else{
 	        topregions <- getregionTopMutatedRanges(testgns1gene,
 	                                                variantsassociated[listvarinregion,], #somaticvarranges[[idxchr]],
