@@ -100,7 +100,7 @@ sigDriver_annotate <- function(signature_test,
 		resultsSKATanno=lapply(1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 
 	}
-	if (type(resultsSKATanno) != "list"){
+	if (class(resultsSKATanno) != "list"){
 		resultsSKATanno=list(resultsSKATanno)
 	}
 	
