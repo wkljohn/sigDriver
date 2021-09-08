@@ -39,7 +39,7 @@ sigDriver <- function(signature_test,
 	#tweak cut-off for signatures with lower median sample mutation load
 	if (signature_test == "SBS84" || signature_test == "SBS9"|| signature_test == "Signature_EX11"|| signature_test == "SBS-E9"){
 		print("lower sample mutation load mode")
-		minentityposcasespct = 0.015
+		minentityposcasespct = 0.02	#20210908 best:minentityposcasespct = 0.015
 		#min_testing_bin_vars = 6
 		#frame_pruned_min_nvar = 6
 		corrVariantFactor = 1

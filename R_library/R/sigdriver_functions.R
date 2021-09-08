@@ -173,7 +173,9 @@ read_variants_ranges_withGT <- function(variant_file){
 merge_GR <- function(GRList){
 	GR=GRanges()
 	for (i in 1:length(GRList)){
-		GR=c(GR,GRList[[i]])
+		if (class(GRList[[i]])[1] == "GRanges"){
+			GR=c(GR,GRList[[i]])
+		}
 	}
 	return(GR)
 }
