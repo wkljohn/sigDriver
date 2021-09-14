@@ -88,10 +88,10 @@ sigDriver_annotate <- function(signature_test,
 	if (threads > 1){
 		print("Starting association workers...")
 		if (grepl("b06",Sys.info()["nodename"])){
-		  cl <- parallel::makeCluster(6,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/sigDriverAnno_info_parallel.log')
-		  #cl <- parallel::makeCluster(10,useXDR=FALSE,type="PSOCK")
+		  cl <- parallel::makeCluster(threads,useXDR=TRUE)#, outfile='/b06x-isilon/b06x-c/chromothripsis/results/icgc/stratton_breast/mutSig/Publication_Master/Association/results/logs/sigDriverAnno_info_parallel.log')
+		  #cl <- parallel::makeCluster(threads,useXDR=FALSE,type="PSOCK")
 		}else{
-		  cl <- parallel::makeCluster(6,useXDR=FALSE,type="FORK")
+		  cl <- parallel::makeCluster(threads,useXDR=FALSE,type="FORK")
 		}
 		resultsSKATanno=parSapply(cl, 1:length(gns$SYMBOL), doassocandwriteSKAThotspotPerm, gns=gns,somaticvarranges=somaticvarranges,outfile=outfile,samplemetatablewithentity=sampleinfofiltered,sigtest=signature_test,pathfile="",varianttype=50)
 
