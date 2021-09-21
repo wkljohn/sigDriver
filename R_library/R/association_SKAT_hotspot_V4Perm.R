@@ -105,7 +105,7 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 		    
 				#remove redundant variants if variants are 1) singletons 2) from the same case 3) >=2 variants per case
 				max_case_variants = 2
-				min_tested_variants = 1
+				min_tested_variants = 2
 		    if (dim(varframe)[1] >= min_tested_variants){
 					print("filt excess singleton 3")
 					variants_per_case = as.data.table(table(varframe$case_ID))
@@ -266,7 +266,8 @@ doassocandwriteSKAThotspotPerm <- function (igene,
 			tmpdcast=tmpdcast[,c(1,3)]
 			tmpdcast$entity=as.character(tmpdcast$entity)
 			tmpdcast$entity=gsub(" ","",tmpdcast$entity)
-			tmpdcast=head(tmpdcast[order(tmpdcast[,2],decreasing=TRUE),],n=5)
+			#tmpdcast=head(tmpdcast[order(tmpdcast[,2],decreasing=TRUE),],n=5)
+			tmpdcast=tmpdcast[order(tmpdcast[,2],decreasing=TRUE),]
 			
 			if (!is.null(out$p.value.resampling)){
 			  print(min(out$p.value.resampling))
