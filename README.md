@@ -53,6 +53,7 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 | `{signature}_results.tsv` | the final output of the script on associated hotspots and the details |
 | `{signature}_results_FULL.tsv` | the hotspots output before filtering and p-values correction
 | `{signature}_qq.png` | the quantile-quantile plot for the distribution of p-values
+| `{signature}_var_meta.rds` | The corrected variants table for downstream analysis(note: this R object is incompatible across different versions of GenomicRanges)
 
 
 + Running `run_sigdriver_annotate.R` produce the following outputs:
