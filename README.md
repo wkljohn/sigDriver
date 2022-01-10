@@ -45,6 +45,19 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 
 ```
 
+# Inputs
++ Running `run_sigdriver.R` require the following inputs
+| Parameter | Description | Fields |
+| --------- | ----------- | ------ |
+| -v | Input variants in simple format ||
+| -m | Sample metadata | Tab delimited {ID,entity,gender} |
+| -e | Signature exposures | sample X signatures table, column=sample, row=signature |
+| -o | Output folder of sigDriver |
+| -s | Signature name | signature(s) listed in -e |
+| -t | Threads ||
+
+
+
 # Results
 + Running `run_sigdriver.R` produce the following outputs:
 
