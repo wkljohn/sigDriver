@@ -63,7 +63,7 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 | Parameter | Description | Fields |
 | --------- | ----------- | ------ |
 | -g | Reference GTF | |
-| -l | Output from sigdriver | {Signature}_results.tsv in output folder |
+| -l | Results from sigdriver | {Signature}_results.tsv in output folder |
 | -d | RDS object from sigdriver | {Signature}_var_meta.rds in output folder |
 
 
