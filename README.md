@@ -50,7 +50,7 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 
 | Parameter | Description | Fields |
 | --------- | ----------- | ------ |
-| -v | Input variants in simple format | Tab delimited {Entity,ID,COHORT,Genome_Build,Variant_type(SNV/INDEL),Chr,Start,End,Ref,Alt,length,Source} |
+| -v | Input variants in simple format | Tab delimited {Entity,ID,COHORT,Genome_Build,Variant_type(SNV/INDEL),Chr,Start,End,Ref,Alt} |
 | -m | Sample metadata | Tab delimited {ID,entity,gender} |
 | -e | Signature exposures | 'sample' x 'signatures' matrix, column=sample, row=signature |
 | -o | Output folder | |
