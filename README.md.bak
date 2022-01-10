@@ -48,8 +48,8 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 # Inputs
 + Running `run_sigdriver.R` require the following inputs:
 
-| Parameter | Description | Note |
-| --------- | ----------- | ---- |
+| Parameter | Description | Fields |
+| --------- | ----------- | ------ |
 | -v | Input variants in simple format | Tab delimited without column names<br> {Entity,ID,Cohort,Genome_Build,Variant_type(SNV/INDEL),Chr,Start,End,Ref,Alt} |
 | -m | Sample metadata | Tab delimited with column names<br> {ID,entity,gender} |
 | -e | Signature exposures | 'signatures' x 'ID' matrix<br>column names=ID, row names=Signature |
@@ -60,8 +60,8 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 + Running `run_sigdriver_annotate.R` require inputs in-addition to running `run_sigdriver.R`:
 
 
-| Parameter | Description | Note |
-| --------- | ----------- | ---- |
+| Parameter | Description | Fields |
+| --------- | ----------- | ------ |
 | -g | Reference GTF | |
 | -l | Results from sigdriver | {Signature}_results.tsv in output folder |
 | -d | RDS object from sigdriver | {Signature}_var_meta.rds in output folder |
