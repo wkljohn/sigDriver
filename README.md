@@ -53,8 +53,8 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 | -v | Input variants in simple format | |
 | -m | Sample metadata | Tab delimited {ID,entity,gender} |
 | -e | Signature exposures | 'sample' x 'signatures' matrix, column=sample, row=signature |
-| -o | Output folder of sigDriver | |
-| -s | Signature name | signature(s) listed in -e |
+| -o | Output folder | |
+| -s | Signature to test | signature(s) listed in -e |
 | -t | Threads | |
 
 
