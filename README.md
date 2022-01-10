@@ -50,7 +50,7 @@ Rscript run_sigdriver_annotate.R -g gencode.v19.gtf -t 4 -l ./output/SBS9_result
 
 | Parameter | Description | Fields |
 | --------- | ----------- | ------ |
-| -v | Input variants in simple format | |
+| -v | Input variants in simple format | [ICGC simple format](https://docs.icgc.org/submission/guide/icgc-simple-somatic-mutation-format/) |
 | -m | Sample metadata | Tab delimited {ID,entity,gender} |
 | -e | Signature exposures | 'sample' x 'signatures' matrix, column=sample, row=signature |
 | -o | Output folder | |
