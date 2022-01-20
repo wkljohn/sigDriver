@@ -23,6 +23,7 @@ Imports:
     trackViewer (>= 1.22.1),
     qqman (>= 0.1.2),
     VariantAnnotation (>= 1.32.0),
-    DDoutlier (>= 0.1.0)
+    DDoutlier (>= 0.1.0),
+    R.utils (>= 2.9.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
